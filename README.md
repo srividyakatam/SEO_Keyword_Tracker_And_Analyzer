@@ -4,3 +4,11 @@
 pip3 install -r server/requirements.txt
 python3 server/app.py
 ```
+
+Running Front-end
+```bash
+cd seo-frontend
+npm install
+npm start
+```
+browse http://localhost:4200
