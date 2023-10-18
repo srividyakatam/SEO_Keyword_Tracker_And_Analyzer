@@ -12,3 +12,7 @@ npm install
 npm start
 ```
 browse http://localhost:4200
+
+UI Screenshot
+
+![UI Screenshot](image.png)
