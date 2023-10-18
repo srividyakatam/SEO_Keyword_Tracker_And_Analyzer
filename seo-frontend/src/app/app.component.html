@@ -1,0 +1,34 @@
+<mat-toolbar color="primary">
+  SEO Keyword Analyser and Tracker
+</mat-toolbar>
+<div class="form p-3 d-flex flex-column gap-3" [formGroup]="formgroup">
+  <div class="d-flex flex-row align-items-start gap-2">
+    <mat-form-field appearance="outline" class="flex-grow-1">
+      <mat-label>Enter URL</mat-label>
+      <input matInput formControlName="url" placeholder="Enter URL">
+      <mat-error>Invalid URL</mat-error>
+    </mat-form-field>
+    <button class="flex-grow-0" [disabled]="formgroup.invalid" mat-raised-button color="primary">Analyze</button>
+  </div>
+  <div class="d-flex flex-column">
+    <mat-form-field appearance="outline">
+      <mat-label>Search Algorithm</mat-label>
+      <mat-select formControlName="algorithm">
+        <mat-option value="rabin-karp">Rabin Karp</mat-option>
+        <mat-option value="suffix-tree">Suffix Tree</mat-option>
+        <mat-option value="suffix-array">Suffix Array</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button [disabled]="formgroup.invalid" mat-raised-button color="primary">Get Keywords</button>
+  </div>
+</div>
+<angular-tag-cloud [data]="data" [width]="options.width"
+                   [height]="options.height"
+                   [overflow]="options.overflow"
+                   [zoomOnHover]="options.zoomOnHover"
+                   [class.custom-css]='true'
+                   (clicked)="log('clicked', $event)"
+                   (dataChanges)="log('dataChanges', $event)"
+>
+</angular-tag-cloud>
+
