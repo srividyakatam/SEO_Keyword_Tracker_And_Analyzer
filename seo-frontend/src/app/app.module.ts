@@ -12,10 +12,12 @@ import {TagCloudModule} from "angular-tag-cloud-module";
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {ReactiveFormsModule} from "@angular/forms";
 import {MatSelectModule} from "@angular/material/select";
+import { VisualsComponent } from './visuals/visuals.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    VisualsComponent
   ],
   imports: [
     BrowserModule,
