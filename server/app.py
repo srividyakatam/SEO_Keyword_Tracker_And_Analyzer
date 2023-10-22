@@ -1,8 +1,9 @@
+from collections import Counter
 import requests
 from bs4 import BeautifulSoup
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-
+from keywords import getKeywordIdeas
 app = Flask(__name__)
 CORS(app)
 
@@ -26,7 +27,10 @@ def getURLText():
         if href and href.startswith("/"):
             full_url = f"{base_url.rstrip('/')}{href}"
             subpages.add(full_url)
-    return jsonify({"text": soup.text, "subpages": list(subpages)})
+    word_counter={}
+    counter=Counter(soup.text.split())
+    return jsonify({"text": soup.text, "subpages": list(subpages),
+                    "keywords":getKeywordIdeas(None,base_url), "word_counter":counter.most_common(10)})
 
 
 # Run App
