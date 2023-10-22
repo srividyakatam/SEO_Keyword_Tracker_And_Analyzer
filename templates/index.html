@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Keyword Extractor</title>
+    <!-- Add your styles here -->
+</head>
+<body>
+    <h1>Keyword Extractor</h1>
+    <form method="POST">
+        <label for="url">Enter the URL:</label>
+        <input type="text" name="url" id="url" value="{{ url }}" required>
+        <br>
+        <label for="num_keywords">Number of keywords to extract:</label>
+        <input type="number" name="num_keywords" id="num_keywords" value="{{ num_keywords }}" required>
+        <br>
+        <input type="submit" value="Extract Keywords">
+    </form>
+
+    {% if keywords %}
+    <h2>Keywords extracted from the URL:</h2>
+    <ul>
+        {% for keyword in keywords %}
+        <li>{{ loop.index }}. {{ keyword[0] }} ({{ keyword[1] }} times)</li>
+        {% endfor %}
+    </ul>
+
+    <label for="selected_keyword">Select a Keyword:</label>
+    <select id="selected_keyword" name="selected_keyword">
+        <option value="">Select a Keyword</option>
+        {% for keyword in keywords %}
+            <option value="{{ keyword[0] }}">{{ keyword[0] }}</option>
+        {% endfor %}
+    </select>
+
+    {% endif %}
+
+    {% if wordcloud_base64 %}
+    <h2>Word Cloud:</h2>
+    <img id="wordcloud" src="data:image/png;base64,{{ wordcloud_base64 }}" alt="Word Cloud">
+    <div id="keyword-popup" class="hidden">
+        <span id="keyword-count">0</span> times
+    </div>
+    {% endif %}
+
+    <h2>String Matching Algorithms:</h2>
+    <button id="rabin-karp">Rabin-Karp</button>
+    <button id="suffix-tree">Suffix Tree</button>
+    <button id="suffix-array">Suffix Array</button>
+    <button id="naive-matching">Naive String Matching</button>
+    <button id="kmp">KMP Algorithm</button>
+</body>
+<script>
+    const wordCloudImage = document.getElementById("wordcloud");
+    const keywordPopup = document.getElementById("keyword-popup");
+    const keywordCount = document.getElementById("keyword-count");
+
+    const keywordCountMap = {{ keywordCountMap | tojson | default('{}') }};
+
+    wordCloudImage.addEventListener("click", function (event) {
+        const keyword = event.target.alt;
+
+        if (keyword && keywordCountMap.hasOwnProperty(keyword)) {
+            keywordCount.textContent = `${keyword} appeared ${keywordCountMap[keyword]} times`;
+            keywordPopup.style.left = event.clientX + "px";
+            keywordPopup.style.top = event.clientY + 20 + "px";
+            keywordPopup.classList.add("visible");
+
+            setTimeout(function () {
+                keywordPopup.classList.remove("visible");
+            }, 2000);
+        }
+    });
+
+    // JavaScript code to trigger string matching algorithms when buttons are clicked
+    document.getElementById("rabin-karp").addEventListener("click", function() {
+        // Implement Rabin-Karp algorithm
+        // You can trigger this algorithm when the button is clicked
+    });
+
+    document.getElementById("suffix-tree").addEventListener("click", function() {
+        // Implement Suffix Tree algorithm
+        // You can trigger this algorithm when the button is clicked
+    });
+
+    document.getElementById("suffix-array").addEventListener("click", function() {
+        // Implement Suffix Array algorithm
+        // You can trigger this algorithm when the button is clicked
+    });
+
+    document.getElementById("naive-matching").addEventListener("click", function() {
+        // Implement Naive String Matching algorithm
+        // You can trigger this algorithm when the button is clicked
+    });
+
+    document.getElementById("kmp").addEventListener("click", function() {
+        // Implement KMP Algorithm
+        // You can trigger this algorithm when the button is clicked
+    });
+</script>
+</html>
