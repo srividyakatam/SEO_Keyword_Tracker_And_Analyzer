@@ -98,3 +98,25 @@ angular-tag-cloud.custom-css {
 ::ng-deep angular-tag-cloud.custom-css span.w1 {
   color: #18cb42;
 }
+
+.wrapper {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.43) !important;
+  z-index: 2000;
+}
+
+.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  span{
+    font-size: 2em;
+    color: white;
+    font-weight: bolder;
+  }
+}

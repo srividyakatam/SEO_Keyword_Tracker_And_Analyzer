@@ -8,7 +8,9 @@
       <input matInput formControlName="url" placeholder="Enter URL">
       <mat-error>Invalid URL</mat-error>
     </mat-form-field>
-    <button class="flex-grow-0" [disabled]="formgroup.invalid" mat-raised-button color="primary">Analyze</button>
+    <button class="flex-grow-0" (click)="analyseURL()" [disabled]="formgroup.invalid" mat-raised-button color="primary">
+      Analyze
+    </button>
   </div>
   <div class="d-flex flex-column">
     <mat-form-field appearance="outline">
@@ -22,7 +24,7 @@
     <button [disabled]="formgroup.invalid" mat-raised-button color="primary">Get Keywords</button>
   </div>
 </div>
-<angular-tag-cloud [data]="data" [width]="options.width"
+<angular-tag-cloud #tagCloudComponent [data]="data" [width]="options.width"
                    [height]="options.height"
                    [overflow]="options.overflow"
                    [zoomOnHover]="options.zoomOnHover"
@@ -31,4 +33,19 @@
                    (dataChanges)="log('dataChanges', $event)"
 >
 </angular-tag-cloud>
+
+<ng-template [ngIf]="loading">
+  <div class="wrapper">
+    <div class="loading">
+      <div class="d-flex flex-column align-items-center justify-content-center">
+        <mat-spinner diameter="150" mode="indeterminate" color="accent"></mat-spinner>
+        <ul [@listAnimation]="loading_messages.length">
+          <li *ngFor="let item of loading_messages">
+            {{item}}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</ng-template>
 

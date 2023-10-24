@@ -12,7 +12,9 @@ import {TagCloudModule} from "angular-tag-cloud-module";
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {ReactiveFormsModule} from "@angular/forms";
 import {MatSelectModule} from "@angular/material/select";
-import { VisualsComponent } from './visuals/visuals.component';
+import {VisualsComponent} from './visuals/visuals.component';
+import {HttpClientModule} from "@angular/common/http";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 
 @NgModule({
   declarations: [
@@ -30,7 +32,9 @@ import { VisualsComponent } from './visuals/visuals.component';
     TagCloudModule,
     MatToolbarModule,
     ReactiveFormsModule,
-    MatSelectModule
+    MatSelectModule,
+    HttpClientModule,
+    MatProgressSpinnerModule
   ],
   providers: [],
   bootstrap: [AppComponent]
