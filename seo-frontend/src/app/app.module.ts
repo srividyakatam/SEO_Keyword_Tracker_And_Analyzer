@@ -15,11 +15,19 @@ import {MatSelectModule} from "@angular/material/select";
 import {VisualsComponent} from './visuals/visuals.component';
 import {HttpClientModule} from "@angular/common/http";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import {MatListModule} from "@angular/material/list";
+import {MatIconModule} from "@angular/material/icon";
+import {MatLineModule} from "@angular/material/core";
+import {MatChipsModule} from "@angular/material/chips";
+import {MatDialogModule} from "@angular/material/dialog";
+import {NgChartsModule} from "ng2-charts";
+import {DialogContent} from "./dialog-content.component";
 
 @NgModule({
   declarations: [
     AppComponent,
-    VisualsComponent
+    VisualsComponent,
+    DialogContent
   ],
   imports: [
     BrowserModule,
@@ -34,7 +42,13 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
     ReactiveFormsModule,
     MatSelectModule,
     HttpClientModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatListModule,
+    MatIconModule,
+    MatLineModule,
+    MatChipsModule,
+    MatDialogModule,
+    NgChartsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

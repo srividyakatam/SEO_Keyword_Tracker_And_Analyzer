@@ -16,6 +16,7 @@ export interface Algorithm {
   name: string
   time: number
 }
+
 export interface RecommendedTopKey {
   avg_monthly_searches: number
   competition: string

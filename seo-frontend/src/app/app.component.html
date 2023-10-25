@@ -2,50 +2,67 @@
   SEO Keyword Analyser and Tracker
 </mat-toolbar>
 <div class="form p-3 d-flex flex-column gap-3" [formGroup]="formgroup">
-  <div class="d-flex flex-row align-items-start gap-2">
-    <mat-form-field appearance="outline" class="flex-grow-1">
-      <mat-label>Enter URL</mat-label>
-      <input matInput formControlName="url" placeholder="Enter URL">
-      <mat-error>Invalid URL</mat-error>
-    </mat-form-field>
-    <button class="flex-grow-0" (click)="analyseURL()" [disabled]="formgroup.invalid" mat-raised-button color="primary">
-      Analyze
-    </button>
-  </div>
-  <div class="d-flex flex-column">
-    <mat-form-field appearance="outline">
-      <mat-label>Search Algorithm</mat-label>
-      <mat-select formControlName="algorithm">
-        <mat-option value="rabin-karp">Rabin Karp</mat-option>
-        <mat-option value="suffix-tree">Suffix Tree</mat-option>
-        <mat-option value="suffix-array">Suffix Array</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <button [disabled]="formgroup.invalid" mat-raised-button color="primary">Get Keywords</button>
-  </div>
-</div>
-<angular-tag-cloud #tagCloudComponent [data]="data" [width]="options.width"
-                   [height]="options.height"
-                   [overflow]="options.overflow"
-                   [zoomOnHover]="options.zoomOnHover"
-                   [class.custom-css]='true'
-                   (clicked)="log('clicked', $event)"
-                   (dataChanges)="log('dataChanges', $event)"
->
-</angular-tag-cloud>
-
-<ng-template [ngIf]="loading">
-  <div class="wrapper">
-    <div class="loading">
-      <div class="d-flex flex-column align-items-center justify-content-center">
-        <mat-spinner diameter="150" mode="indeterminate" color="accent"></mat-spinner>
-        <ul [@listAnimation]="loading_messages.length">
-          <li *ngFor="let item of loading_messages">
-            {{item}}
-          </li>
-        </ul>
-      </div>
+  <div class="d-flex flex-column align-items-start gap-2">
+    <div class="w-100 d-flex">
+      <mat-form-field appearance="outline" class="flex-grow-1">
+        <mat-label>Enter URL</mat-label>
+        <span matTextPrefix>https://</span>
+        <input (keyup.enter)="analyseURL()" matInput formControlName="url" placeholder="example.com">
+        <mat-error>Invalid URL</mat-error>
+      </mat-form-field>
+    </div>
+    <div class=" w-100 d-flex justify-content-center">
+      <button class="flex-grow-0" (click)="analyseURL()" [disabled]="formgroup.invalid" mat-raised-button
+              color="primary">
+        Analyze
+      </button>
     </div>
   </div>
-</ng-template>
+</div>
+<div *ngIf="!loading else spinner">
+  <div class="d-flex p-2">
+    <button (click)="displayContent()" mat-flat-button color="accent">Content</button>
+  </div>
+  <div class="d-flex">
+    <div class="p-2">
+      <h4>Sub Pages</h4>
+      <mat-chip-listbox>
+        <mat-chip (click)="setUrl(subpage)" *ngFor="let subpage of state?.subpages">
+          {{subpage}}
+        </mat-chip>
+      </mat-chip-listbox>
+    </div>
+    <div class="col-6">
+      <h4>Top 20 Keywords</h4>
+      <canvas
+        baseChart
+        class="chart"
+        [data]="barChartData"
+        [options]="barChartOptions"
+        [plugins]="barChartPlugins"
+        [type]="'bar'"
+      >
+      </canvas>
+    </div>
+  </div>
+  <div class="w-100">
+    <angular-tag-cloud #tagCloudComponent [data]="cloudData" [width]="1"
+                       [height]="700"
+                       [step]="2"
+                       [overflow]="true"
+                       [zoomOnHover]="{ scale: 1.2,transitionTime: 0.1}"
+                       [class.custom-css]='true'
+                       (clicked)="log('clicked', $event)"
+    >
+    </angular-tag-cloud>
+  </div>
+</div>
 
+<ng-template #spinner>
+  <div class="d-flex flex-column justify-content-center align-items-center mt-5">
+    <mat-spinner diameter="150" mode="indeterminate" color="accent"></mat-spinner>
+    <span class="m-3 animate-text">Analysing URL</span>
+    <span class="m-3 animate-text">{{form('url')}}</span>
+
+  </div>
+</ng-template>

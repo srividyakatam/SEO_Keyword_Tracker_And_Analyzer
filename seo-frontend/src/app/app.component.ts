@@ -1,46 +1,26 @@
 import {Component, ViewChild} from '@angular/core';
-import {CloudData, CloudOptions, TagCloudComponent} from "angular-tag-cloud-module";
+import {CloudData, TagCloudComponent} from "angular-tag-cloud-module";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {HttpClient} from "@angular/common/http";
 import {ANALYSE_URL, APIResponse} from "./constants";
-import {animate, query, stagger, style, transition, trigger} from "@angular/animations";
+import {BehaviorSubject} from "rxjs";
+import {response} from "./test";
+import {MatDialog} from "@angular/material/dialog";
+import {DialogContent} from "./dialog-content.component";
+import {ChartConfiguration, ChartData} from 'chart.js';
+import {BaseChartDirective} from 'ng2-charts';
+
+import DataLabelsPlugin from 'chartjs-plugin-datalabels';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  animations: [
-    trigger('listAnimation', [
-      transition('* <=> *', [
-        query(':enter',
-          [style({opacity: 0}), stagger('100ms', animate('1s ease-out', style({opacity: 1})))],
-          {optional: true}
-        ),
-        query(':leave',
-          animate('1s', style({opacity: 0})),
-          {optional: true}
-        )
-      ])
-    ])
-  ]
 })
 export class AppComponent {
 
   @ViewChild('tagCloudComponent', {static: true}) tagCloudComponent!: TagCloudComponent;
-  options: CloudOptions = {
-    width: 1,
-    height: 1000,
-    overflow: true,
-    zoomOnHover: {
-      scale: 1.2,
-      transitionTime: 0.3,
-    },
-    realignOnResize: true,
-    step: 1,
-    randomizeAngle: true,
-  };
-
-  data: CloudData[] = Array.from({length: 100}, (_, i) => {
+  cloudData: CloudData[] = Array.from({length: 100}, (_, i) => {
     let weight = Math.floor(Math.random() * 10)
     return {
       text: `Tag ${i}`,
@@ -54,20 +34,68 @@ export class AppComponent {
       Validators.pattern('^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$')]),
     algorithm: new FormControl(''),
   });
-  showiFrame = true;
-  loading: boolean = true;
-  loading_messages = [
-    "Fetching URL",
-    "Analysing URL",
-    "Generating Word Cloud",
-    "Done"
-  ]
+  urlData = new BehaviorSubject<APIResponse | undefined>(undefined)
+  loading: boolean = false;
+  @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
+  public barChartOptions: ChartConfiguration['options'] = {
+    indexAxis: 'y',
+    elements: {
+      bar: {
+        borderWidth: 2,
+      }
+    },
+    responsive: true,
+  };
+  public barChartPlugins = [DataLabelsPlugin];
+  public barChartData!: ChartData<'bar'>
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private dialog: MatDialog,
   ) {
+    this.urlData.next(response)
     // @ts-ignore
     window.home = this;
+    this.urlData.subscribe(newRes => {
+      if (!newRes) {
+        return
+      }
+      console.log({newRes})
+
+      const sortedKeys = Object.keys(newRes.all_counter)
+        .sort((a, b) => newRes.all_counter[b] - newRes.all_counter[a])
+
+      const top10Keys = sortedKeys.slice(0, 10)
+      this.barChartData = {
+        labels: top10Keys,
+        datasets: [
+          {
+            data: top10Keys.map(key => newRes.all_counter[key])
+            ,
+            label: 'Top Keywords'
+          },
+        ]
+      }
+      const top100 = sortedKeys.slice(0, 100)
+      const max_weight = newRes.all_counter[top100[0]]
+      this.cloudData = top100.map(key => {
+        let weight = newRes.all_counter[key] / max_weight * 10
+        return {
+          text: key,
+          weight,
+          // rotate: Math.floor(Math.random() * 90) - 45,
+          tooltip: `${newRes.all_counter[key]} occurrences`,
+        }
+      })
+      setTimeout(() => {
+        this.tagCloudComponent && this.tagCloudComponent.reDraw()
+      }, 1000)
+      this.loading = false
+    })
+  }
+
+  get state() {
+    return this.urlData.value
   }
 
   log(eventType: string, e?: any) {
@@ -78,24 +106,37 @@ export class AppComponent {
     console.log(this.formgroup.value)
     this.loading = true
     this.http.post<APIResponse>(ANALYSE_URL, {
-      url: this.formgroup.value.url,
+      url: 'https://' + this.form('url'),
     }).subscribe(res => {
-      console.log(res)
-      const sortedKeys = Object.keys(res.all_counter).sort((a, b) => res.all_counter[b] - res.all_counter[a]);
-
-      const top100 = sortedKeys.slice(0, 100)
-      const max_weight = res.all_counter[top100[0]]
-      this.data = top100.map(key => {
-        let weight = res.all_counter[key] / max_weight * 10
-        return {
-          text: key,
-          weight,
-          rotate: Math.floor(Math.random() * 90) - 45,
-          tooltip: `${res.all_counter[key]} occurrences`,
-        }
-      })
-      this.tagCloudComponent.reDraw()
+      this.urlData.next(res)
       this.loading = false
     })
   }
+
+  form(param: string): string {
+    return this.formgroup.get(param)?.value || ""
+  }
+
+  setUrl(subpage: string) {
+    this.formgroup.get('url')?.setValue(subpage.replaceAll('https://', ""))
+  }
+
+  displayContent() {
+    this.dialog.open(DialogContent, {
+      data: this.state?.text
+    })
+  }
+
+  iterate(top_keywords: { [p: string]: number } | undefined) {
+    if (!top_keywords) return []
+    return Object.keys(top_keywords || {})
+      .sort((a, b) => top_keywords[b] - top_keywords[a])
+      .map(key => {
+        return {
+          key,
+          value: top_keywords[key]
+        }
+      })
+  }
 }
+
