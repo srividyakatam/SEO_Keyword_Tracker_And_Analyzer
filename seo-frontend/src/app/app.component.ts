@@ -1,4 +1,5 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, ViewChild,OnInit} from '@angular/core';
+import {ChartConfiguration, ChartData, ChartEvent, ChartType, Chart} from "chart.js";
 import {CloudData, CloudOptions, TagCloudComponent} from "angular-tag-cloud-module";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {HttpClient} from "@angular/common/http";
