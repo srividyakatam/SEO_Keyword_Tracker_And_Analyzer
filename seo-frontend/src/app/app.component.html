@@ -6,16 +6,45 @@
     <div class="w-100 d-flex">
       <mat-form-field appearance="outline" class="flex-grow-1">
         <mat-label>Enter URL</mat-label>
-        <span matTextPrefix>https://</span>
+        <!--<span matTextPrefix>https://</span> -->
         <input (keyup.enter)="analyseURL()" matInput formControlName="url" placeholder="example.com">
         <mat-error>Invalid URL</mat-error>
       </mat-form-field>
     </div>
-    <div class=" w-100 d-flex justify-content-center">
-      <button class="flex-grow-0" (click)="analyseURL()" [disabled]="formgroup.invalid" mat-raised-button
+    <div class=" w-100 d-flex justify-content-center"> 
+      <button class="flex-grow-0 button-spacing enlarge-button" (click)="analyseURL()" [disabled]="formgroup.invalid" mat-raised-button
               color="primary">
         Analyze
       </button>
+
+      <mat-form-field class="mr-10">
+        <mat-label>Type of Algorithm</mat-label>
+        <mat-select (change)="onAlgorithmSelected($event)">
+          <mat-option value="Rabin-Karp">Rabin-Karp</mat-option>
+          <mat-option value="Suffix Tree">Suffix Tree</mat-option>
+          <mat-option value="Suffix Array">Suffix Array</mat-option>
+          <mat-option value="Naive String Matching">Naive String Matching</mat-option>
+          <mat-option value="KMP">KMP(Knuth_Morris_Pratt)</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button (click)="executeAlgorithm()">Show Analyze Charts</button>
+
+      <div *ngIf="totalTimeTaken !== undefined">
+        Total Time Taken: {{ totalTimeTaken }} milliseconds
+      </div>
+<!-- Content for Rabin-Karp 
+<div *ngIf="selectedAlgorithm === 'Rabin-Karp'">
+  <p>Rabin-Karp Content</p>
+  <div *ngIf="totalTimeTaken !== undefined">
+    Total Time Taken: {{ totalTimeTaken }} milliseconds
+  </div>
+</div> 
+
+ Content for Suffix Tree 
+<div *ngIf="selectedAlgorithm === 'Suffix Tree'">
+  <p>Suffix Tree Content</p>
+  <div>{{ suffixTreeOutput }}</div>
+</div> -->
     </div>
   </div>
 </div>
@@ -66,3 +95,21 @@
 
   </div>
 </ng-template>
+
+
+
+<style>
+  .flex-grow-0
+  {
+    padding: 10px;
+  }
+
+  .button-spacing {
+  margin-right: 40px; /* Adjust the value to control the space between the button and the dropdown */
+  }
+
+  .enlarge-button {
+  padding: 25px 60px; /* Adjust the padding values to control the button size */
+  font-size: 18px;    /* Adjust the font size as needed */
+}
+</style>

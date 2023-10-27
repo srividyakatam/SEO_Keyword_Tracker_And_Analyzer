@@ -9,8 +9,9 @@ import {MatDialog} from "@angular/material/dialog";
 import {DialogContent} from "./dialog-content.component";
 import {ChartConfiguration, ChartData} from 'chart.js';
 import {BaseChartDirective} from 'ng2-charts';
-
+import { MatDialogRef } from '@angular/material/dialog';
 import DataLabelsPlugin from 'chartjs-plugin-datalabels';
+ 
 
 @Component({
   selector: 'app-root',
@@ -18,7 +19,7 @@ import DataLabelsPlugin from 'chartjs-plugin-datalabels';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-
+  title: string = 'SEO Keyword Tracker and Analyzer'
   @ViewChild('tagCloudComponent', {static: true}) tagCloudComponent!: TagCloudComponent;
   cloudData: CloudData[] = Array.from({length: 100}, (_, i) => {
     let weight = Math.floor(Math.random() * 10)
@@ -48,6 +49,8 @@ export class AppComponent {
   };
   public barChartPlugins = [DataLabelsPlugin];
   public barChartData!: ChartData<'bar'>
+  
+  text: string = '';
 
   constructor(
     private http: HttpClient,
@@ -106,7 +109,8 @@ export class AppComponent {
     console.log(this.formgroup.value)
     this.loading = true
     this.http.post<APIResponse>(ANALYSE_URL, {
-      url: 'https://' + this.form('url'),
+      //url: 'https://' + this.form('url'),
+      url: this.form('url'),
     }).subscribe(res => {
       this.urlData.next(res)
       this.loading = false
@@ -121,11 +125,245 @@ export class AppComponent {
     this.formgroup.get('url')?.setValue(subpage.replaceAll('https://', ""))
   }
 
-  displayContent() {
+  /*displayContent() {
     this.dialog.open(DialogContent, {
       data: this.state?.text
-    })
+    });
+  
+    const dialogRef: MatDialogRef<DialogContent, string | undefined> = this.dialog.open(DialogContent, {
+      data: this.state?.text, // Pass the current text to the dialog
+    });
+    dialogRef.afterClosed().subscribe((result: string | undefined) => {
+      if (result) {
+        // Update the text variable with the user-entered text
+        this.text = result;
+
+        this.urlData.next(response)
+        // @ts-ignore
+        window.home = this;
+        this.urlData.subscribe(newRes => {
+        if (!newRes) {
+        return
+        }
+        console.log({newRes})
+
+
+        
+        const sortedKeys = Object.keys(newRes.all_counter)
+        .sort((a, b) => newRes.all_counter[b] - newRes.all_counter[a])
+
+        const top10Keys = sortedKeys.slice(0, 10)
+        data: top10Keys.map(key => newRes.all_counter[key])
+        // Call the Rabin-Karp algorithm with the updated text
+        const keyword = 'your_keyword'; // Replace with the desired keyword
+        const occurrences = this.rabin_karp_string_search(keyword, this.text);
+  
+        // Handle the occurrences as needed
+      });
+    });
+  } */
+/*
+  displayContent() {
+    // Open the dialog to allow the user to enter text
+    const dialogRef: MatDialogRef<DialogContent, string | undefined> = this.dialog.open(DialogContent, {
+      data: this.state?.text, // Pass the current text to the dialog
+    });
+  
+    dialogRef.afterClosed().subscribe((result: string | undefined) => {
+      if (result) {
+        // Update the text variable with the user-entered text
+        this.text = result;
+  
+        this.urlData.next(response);
+        // @ts-ignore
+        window.home = this;
+        this.urlData.subscribe(newRes => {
+          if (!newRes) {
+            return;
+          }
+          console.log({ newRes });
+  
+          const sortedKeys = Object.keys(newRes.all_counter)
+            .sort((a, b) => newRes.all_counter[b] - newRes.all_counter[a]);
+  
+          const top10Keys = sortedKeys.slice(0, 10);
+  
+          // Execute Rabin-Karp algorithm for each keyword in top10Keys
+          top10Keys.forEach(keyword => {
+            const occurrences = this.rabin_karp_string_search(keyword, this.text);
+            // Handle the occurrences as needed for each keyword
+            console.log(`Keyword: ${keyword}, Occurrences: `, occurrences);
+          });
+        });
+      }
+    });
   }
+  
+  rabin_karp_string_search(keyword: string, text: string): number[] {
+    // Rabin-Karp search implementation
+    // Initialize variables
+    keyword = keyword.toLowerCase(); // Convert keyword to lowercase for case-insensitive search
+    text = text.toLowerCase();
+
+    const prime = 101; // A prime number for hashing
+    let keyword_hash = 0;
+    let text_hash = 0;
+
+    const keywordLen = keyword.length;
+    const textLen = text.length;
+    const occurrences: number[] = [];
+
+    // Calculate the initial text hash
+    for (let i = 0; i < keywordLen; i++) {
+      text_hash += text.charCodeAt(i);
+    }
+
+    for (let i = 0; i < textLen - keywordLen + 1; i++) {
+      if (text_hash === keyword_hash && text.slice(i, i + keywordLen) === keyword) {
+        occurrences.push(i);
+      }
+
+      if (i < textLen - keywordLen) {
+        // Update the text hash using rolling hash
+        text_hash = text_hash - text.charCodeAt(i) + text.charCodeAt(i + keywordLen);
+      }
+    }
+
+    return occurrences;
+  } */
+
+  /*displayContent() {
+    // Open the dialog to allow the user to enter text
+    const dialogRef: MatDialogRef<DialogContent, string | undefined> = this.dialog.open(DialogContent, {
+      data: this.state?.text, // Pass the current text to the dialog
+    });
+  }
+
+  totalTimeTaken: number | undefined;
+  executeRabinKarpForTop10Keywords() {
+    const startTime = performance.now();
+    // Ensure top10Keys is available here
+    const top10Keys = this.getTop10Keywords(); // Define a method to get top10Keys
+  
+    if (top10Keys.length === 0) {
+      console.log('top10Keys is empty.');
+      const endTime = performance.now();
+      this.totalTimeTaken = endTime - startTime;
+      return;
+    }
+  
+    // Open the dialog to allow the user to enter text
+    const dialogRef: MatDialogRef<DialogContent, string | undefined> = this.dialog.open(DialogContent, {
+      data: this.state?.text, // Pass the current text to the dialog
+    });
+  
+    dialogRef.afterClosed().subscribe((result: string | undefined) => {
+      if (result) {
+        // Iterate through top10Keys and execute Rabin-Karp for each keyword
+        top10Keys.forEach(keyword => {
+          const occurrences = this.rabin_karp_string_search(keyword, result);
+          // Handle the occurrences as needed for each keyword
+          console.log(`Keyword: ${keyword}, Occurrences: `, occurrences);
+        });
+        const endTime = performance.now();
+      this.totalTimeTaken = endTime - startTime;
+
+      // Print the total time taken
+      console.log(`Total time taken: ${this.totalTimeTaken} milliseconds`);
+      }
+    });
+  }*/
+  dialogText: string = '';
+  displayContent() {
+    // Open the dialog to allow the user to enter text
+    const dialogRef: MatDialogRef<DialogContent, string | undefined> = this.dialog.open(DialogContent, {
+      data: this.text // Pass the current text to the dialog
+    });
+  
+    dialogRef.afterClosed().subscribe((result: string | undefined) => {
+      if (result) {
+        // Update the dialogText variable with the user-entered text
+        this.dialogText = result;
+  
+        // Call the Rabin-Karp algorithm with the updated text
+        const top10Keys = this.getTop10Keywords();
+        top10Keys.forEach(keyword => {
+          const occurrences = this.rabin_karp_string_search(keyword, this.dialogText);
+          // Handle the occurrences as needed
+          console.log(`Keyword: ${keyword}, Occurrences: `, occurrences);
+        });
+      }
+    });
+  }
+  totalTimeTaken: number | undefined;
+  executeRabinKarpForTop10Keywords() {
+    const startTime = performance.now();
+    const top10Keys = this.getTop10Keywords();
+  
+    if (top10Keys.length === 0) {
+      console.log('top10Keys is empty.');
+      const endTime = performance.now();
+      this.totalTimeTaken = endTime - startTime;
+      return;
+    }
+  
+    // Ensure dialogText contains the text input from the dialog
+    const dialogText = this.dialogText;
+  
+    // Iterate through top10Keys and execute Rabin-Karp for each keyword
+    top10Keys.forEach(keyword => {
+      const occurrences = this.rabin_karp_string_search(keyword, dialogText);
+      // Handle the occurrences as needed for each keyword
+      console.log(`Keyword: ${keyword}, Occurrences: `, occurrences);
+    });
+  
+    const endTime = performance.now();
+    this.totalTimeTaken = endTime - startTime;
+  
+    // Print the total time taken
+    console.log(`Total time taken: ${this.totalTimeTaken} milliseconds`);
+  }
+  
+  getTop10Keywords(): string[] {
+    const sortedKeys = Object.keys(this.state?.all_counter || {})
+      .sort((a, b) => (this.state?.all_counter?.[b] ||0)- (this.state?.all_counter?.[a]||0));
+  
+    return sortedKeys.slice(0, 10);
+  }
+
+  rabin_karp_string_search(keyword: string, text: string): number[] {
+    // Rabin-Karp search implementation
+    // Initialize variables
+    keyword = keyword.toLowerCase(); // Convert keyword to lowercase for case-insensitive search
+    text = text.toLowerCase();
+
+    const prime = 101; // A prime number for hashing
+    let keyword_hash = 0;
+    let text_hash = 0;
+
+    const keywordLen = keyword.length;
+    const textLen = text.length;
+    const occurrences: number[] = [];
+
+    // Calculate the initial text hash
+    for (let i = 0; i < keywordLen; i++) {
+      text_hash += text.charCodeAt(i);
+    }
+
+    for (let i = 0; i < textLen - keywordLen + 1; i++) {
+      if (text_hash === keyword_hash && text.slice(i, i + keywordLen) === keyword) {
+        occurrences.push(i);
+      }
+
+      if (i < textLen - keywordLen) {
+        // Update the text hash using rolling hash
+        text_hash = text_hash - text.charCodeAt(i) + text.charCodeAt(i + keywordLen);
+      }
+    }
+
+    return occurrences;
+  }
+  
 
   iterate(top_keywords: { [p: string]: number } | undefined) {
     if (!top_keywords) return []
@@ -136,7 +374,42 @@ export class AppComponent {
           key,
           value: top_keywords[key]
         }
-      })
+      });
   }
+  
+  executeSuffixTree(){
+    
+  }
+  executeSuffixArray(){}
+  executeNaive_String_Matching(){}
+  executeKMP(){}
+rabinKarpOutput: string | undefined;
+suffixTreeOutput: string | undefined;
+  // Add variables for other algorithms as needed
+    
+selectedAlgorithm: string = 'Rabin-Karp'; // Default to Rabin-Karp
+
+onAlgorithmSelected(event: any) {
+  this.selectedAlgorithm = event.value;
 }
+
+executeAlgorithm() {
+  if (this.selectedAlgorithm === 'Rabin-Karp') {
+    this.executeRabinKarpForTop10Keywords();
+  } else if (this.selectedAlgorithm === 'Suffix Tree') {
+    this.executeSuffixTree(); // Implement the Suffix Tree logic
+  } else if (this.selectedAlgorithm === 'Suffix Array') {
+    this.executeSuffixArray(); // Implement the Suffix Tree logic
+  } else if (this.selectedAlgorithm === 'Naive String Matching') {
+    this.executeNaive_String_Matching(); // Implement the Suffix Tree logic
+  } else if (this.selectedAlgorithm === 'KMP') {
+    this.executeKMP(); // Implement the Suffix Tree logic
+  }
+
+}
+
+
+}
+
+
 
