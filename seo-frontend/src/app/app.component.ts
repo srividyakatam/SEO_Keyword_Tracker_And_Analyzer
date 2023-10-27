@@ -273,6 +273,28 @@ export class AppComponent {
       }
     });
   }*/
+
+  iterate(top_keywords: { [p: string]: number } | undefined) {
+    if (!top_keywords) return []
+    return Object.keys(top_keywords || {})
+      .sort((a, b) => top_keywords[b] - top_keywords[a])
+      .map(key => {
+        return {
+          key,
+          value: top_keywords[key]
+        }
+      });
+  }
+  
+
+  getTop10Keywords(): string[] {
+    const sortedKeys = Object.keys(this.state?.all_counter || {})
+      .sort((a, b) => (this.state?.all_counter?.[b] ||0)- (this.state?.all_counter?.[a]||0));
+  
+    return sortedKeys.slice(0, 10);
+  }
+
+  /*
   dialogText: string = '';
   displayContent() {
     // Open the dialog to allow the user to enter text
@@ -295,6 +317,7 @@ export class AppComponent {
       }
     });
   }
+
   totalTimeTaken: number | undefined;
   executeRabinKarpForTop10Keywords() {
     const startTime = performance.now();
@@ -324,12 +347,126 @@ export class AppComponent {
     console.log(`Total time taken: ${this.totalTimeTaken} milliseconds`);
   }
   
-  getTop10Keywords(): string[] {
-    const sortedKeys = Object.keys(this.state?.all_counter || {})
-      .sort((a, b) => (this.state?.all_counter?.[b] ||0)- (this.state?.all_counter?.[a]||0));
+  executekmpSearchTop10Keywords() {
+    const startTime = performance.now();
+    const top10Keys = this.getTop10Keywords();
   
-    return sortedKeys.slice(0, 10);
+    if (top10Keys.length === 0) {
+      console.log('top10Keys is empty.');
+      const endTime = performance.now();
+      this.totalTimeTaken = endTime - startTime;
+      return;
+    }
+  
+    // Ensure dialogText contains the text input from the dialog
+    const dialogText = this.dialogText;
+  
+    // Iterate through top10Keys and execute Rabin-Karp for each keyword
+    top10Keys.forEach(keyword => {
+      const occurrences = this.kmpSearch(keyword, dialogText);
+      // Handle the occurrences as needed for each keyword
+      console.log(`Keyword: ${keyword}, Occurrences: `, occurrences);
+    });
+  
+    const endTime = performance.now();
+    this.totalTimeTaken = endTime - startTime;
+  
+    // Print the total time taken
+    console.log(`Total time taken: ${this.totalTimeTaken} milliseconds`);
   }
+  */
+
+  dialogText: string = '';
+
+displayContent() {
+  // Open the dialog to allow the user to enter text
+  const dialogRef: MatDialogRef<DialogContent, string | undefined> = this.dialog.open(DialogContent, {
+    data: this.text // Pass the current text to the dialog
+  });
+
+  dialogRef.afterClosed().subscribe((result: string | undefined) => {
+    if (result) {
+      // Update the dialogText variable with the user-entered text
+      this.dialogText = result;
+      
+      // You can choose which algorithm to execute based on user selection
+      if (this.selectedAlgorithm === 'Rabin-Karp') {
+        this.executeRabinKarpForTop10Keywords();
+      } else if (this.selectedAlgorithm === 'KMP') {
+        this.executekmpSearchTop10Keywords();
+      }
+    }
+  });
+}
+
+totalTimeTaken: number | undefined;
+rabinKarpOutput: string | undefined;
+suffixTreeOutput: string | undefined;
+suffixArrayOutput: string | undefined;
+naiveStringMatchingOutput: string | undefined;
+kmpOutput: string | undefined;
+selectedAlgorithm = 'Rabin-Karp'; // Initialize with Rabin-Karp as default
+
+executeRabinKarpForTop10Keywords() {
+  const startTime = performance.now();
+  const top10Keys = this.getTop10Keywords();
+
+  if (top10Keys.length === 0) {
+    console.log('top10Keys is empty.');
+    const endTime = performance.now();
+    this.totalTimeTaken = endTime - startTime;
+    return;
+  }
+
+  // Ensure dialogText contains the text input from the dialog
+  const dialogText = this.dialogText;
+
+  // Iterate through top10Keys and execute Rabin-Karp for each keyword
+  top10Keys.forEach(keyword => {
+    const occurrences = this.rabin_karp_string_search(keyword, dialogText);
+    // Handle the occurrences as needed for each keyword
+    console.log(`Keyword: ${keyword}, Occurrences: `, occurrences);
+  });
+
+  const endTime = performance.now();
+  this.totalTimeTaken = endTime - startTime;
+
+  // Print the total time taken
+  console.log(`Total time taken: ${this.totalTimeTaken} milliseconds`);
+  this.rabinKarpOutput = this.totalTimeTaken.toFixed(6).toString();
+}
+
+executekmpSearchTop10Keywords() {
+  const startTime = performance.now();
+  const top10Keys = this.getTop10Keywords();
+
+  if (top10Keys.length === 0) {
+    console.log('top10Keys is empty.');
+    const endTime = performance.now();
+    this.totalTimeTaken = endTime - startTime;
+    return;
+  }
+
+  // Ensure dialogText contains the text input from the dialog
+  const dialogText = this.dialogText;
+
+  // Iterate through top10Keys and execute KMP search for each keyword
+  top10Keys.forEach(keyword => {
+    const occurrences = this.kmpSearch(keyword, dialogText);
+    // Handle the occurrences as needed for each keyword
+    console.log(`Keyword: ${keyword}, Occurrences: `, occurrences);
+  });
+
+  const endTime = performance.now();
+  this.totalTimeTaken = endTime - startTime;
+
+
+  // Print the total time taken
+  console.log(`Total time taken: ${this.totalTimeTaken} milliseconds`);
+  this.kmpOutput = this.totalTimeTaken.toFixed(6).toString();
+}
+
+  
 
   rabin_karp_string_search(keyword: string, text: string): number[] {
     // Rabin-Karp search implementation
@@ -364,36 +501,71 @@ export class AppComponent {
     return occurrences;
   }
   
-
-  iterate(top_keywords: { [p: string]: number } | undefined) {
-    if (!top_keywords) return []
-    return Object.keys(top_keywords || {})
-      .sort((a, b) => top_keywords[b] - top_keywords[a])
-      .map(key => {
-        return {
-          key,
-          value: top_keywords[key]
-        }
-      });
+  kmpSearch(keyword: string, text: string): number[] {
+    // Convert keyword and text to lowercase for case-insensitive search
+    keyword = keyword.toLowerCase();
+    text = text.toLowerCase();
+  
+    const keywordLen = keyword.length;
+    const textLen = text.length;
+  
+    // Build the KMP failure function (partial match table)
+    const failure: number[] = new Array(keywordLen).fill(0);
+    let j = 0;
+    for (let i = 1; i < keywordLen; i++) {
+      while (j > 0 && keyword[i] !== keyword[j]) {
+        j = failure[j - 1];
+      }
+      if (keyword[i] === keyword[j]) {
+        j++;
+      }
+      failure[i] = j;
+    }
+  
+    // Perform the KMP search
+    const occurrences: number[] = [];
+    j = 0;
+    for (let i = 0; i < textLen; i++) {
+      while (j > 0 && text[i] !== keyword[j]) {
+        j = failure[j - 1];
+      }
+      if (text[i] === keyword[j]) {
+        j++;
+      }
+      if (j === keywordLen) {
+        const start = i - j + 1;
+        occurrences.push(start);
+        j = failure[j - 1];
+      }
+    }
+  
+    return occurrences;
   }
   
+
+  
+  
   executeSuffixTree(){
-    
+
   }
   executeSuffixArray(){}
   executeNaive_String_Matching(){}
   executeKMP(){}
-rabinKarpOutput: string | undefined;
-suffixTreeOutput: string | undefined;
+//rabinKarpOutput: string | undefined;
+//suffixTreeOutput: string | undefined;
+
   // Add variables for other algorithms as needed
     
-selectedAlgorithm: string = 'Rabin-Karp'; // Default to Rabin-Karp
+//selectedAlgorithm: string = 'Rabin-Karp'; // Default to Rabin-Karp
 
 onAlgorithmSelected(event: any) {
   this.selectedAlgorithm = event.value;
 }
+showAlgorithmOutput: boolean = false;
+
 
 executeAlgorithm() {
+  this.showAlgorithmOutput = true;
   if (this.selectedAlgorithm === 'Rabin-Karp') {
     this.executeRabinKarpForTop10Keywords();
   } else if (this.selectedAlgorithm === 'Suffix Tree') {
@@ -403,9 +575,44 @@ executeAlgorithm() {
   } else if (this.selectedAlgorithm === 'Naive String Matching') {
     this.executeNaive_String_Matching(); // Implement the Suffix Tree logic
   } else if (this.selectedAlgorithm === 'KMP') {
-    this.executeKMP(); // Implement the Suffix Tree logic
+    this.executekmpSearchTop10Keywords(); // Implement the Suffix Tree logic
   }
 
+}
+
+showCharts() {
+  this.showAlgorithmOutput = false;
+  
+  
+  this.executeRabinKarpForTop10Keywords;
+  this.executeSuffixArray;
+  this.executeSuffixTree;
+  this.executeNaive_String_Matching;
+  this.executekmpSearchTop10Keywords;
+  // Reset the results
+  /*this.rabinKarpOutput = undefined;
+  this.suffixTreeOutput = undefined;
+  this.suffixArrayOutput = undefined;
+  this.naiveStringMatchingOutput = undefined;
+  this.kmpOutput = undefined;
+
+  // Execute all selected algorithms
+  if (this.selectedAlgorithm === 'Rabin-Karp') {
+    this.executeRabinKarpForTop10Keywords();
+  } else if (this.selectedAlgorithm === 'Suffix Tree') {
+    this.executeSuffixTree();
+  } else if (this.selectedAlgorithm === 'Suffix Array') {
+    this.executeSuffixArray();
+  } else if (this.selectedAlgorithm === 'Naive String Matching') {
+    this.executeNaive_String_Matching();
+  } else if (this.selectedAlgorithm === 'KMP') {
+    this.executekmpSearchTop10Keywords();
+  }*/
+  this.rabinKarpOutput
+  this.suffixTreeOutput 
+  this.suffixArrayOutput
+  this.naiveStringMatchingOutput 
+  this.kmpOutput
 }
 
 

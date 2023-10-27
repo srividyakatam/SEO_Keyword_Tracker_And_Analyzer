@@ -19,19 +19,93 @@
 
       <mat-form-field class="mr-10">
         <mat-label>Type of Algorithm</mat-label>
-        <mat-select (change)="onAlgorithmSelected($event)">
+        <mat-select [(value)]="selectedAlgorithm" (ngModelChange)="onAlgorithmSelected($event)">
           <mat-option value="Rabin-Karp">Rabin-Karp</mat-option>
           <mat-option value="Suffix Tree">Suffix Tree</mat-option>
           <mat-option value="Suffix Array">Suffix Array</mat-option>
           <mat-option value="Naive String Matching">Naive String Matching</mat-option>
-          <mat-option value="KMP">KMP(Knuth_Morris_Pratt)</mat-option>
+          <mat-option value="KMP">KMP</mat-option>
         </mat-select>
       </mat-form-field>
-      <button (click)="executeAlgorithm()">Show Analyze Charts</button>
-
-      <div *ngIf="totalTimeTaken !== undefined">
+      <button (click)="executeAlgorithm()">Execute</button> 
+      <button (click)="showCharts()">Charts</button>
+     <!-- <div *ngIf="totalTimeTaken !== undefined">
         Total Time Taken: {{ totalTimeTaken }} milliseconds
+      </div> -->
+      <div *ngIf="showAlgorithmOutput">
+        <div *ngIf="selectedAlgorithm === 'Rabin-Karp' && rabinKarpOutput !== undefined">
+          <!-- Display Rabin-Karp algorithm results -->
+          <h2>Rabin-Karp Results</h2>
+          <ul>
+            Total Time Taken: {{rabinKarpOutput}} milliseconds
+            <!--<li *ngFor="let result of rabinKarpOutput">{{ result }}</li>-->
+          </ul>
+        </div>
+      
+        <div *ngIf="selectedAlgorithm === 'Suffix Tree' && suffixTreeOutput !== undefined">
+          <!-- Display Suffix Tree algorithm results -->
+          <h2>Suffix Tree Results</h2>
+          <ul>
+            Total Time Taken: {{suffixTreeOutput}} milliseconds
+          </ul>
+        </div>
+
+        <div *ngIf="selectedAlgorithm === 'Suffix Array' && suffixArrayOutput !== undefined">
+          <!-- Display Suffix Tree algorithm results -->
+          <h2>Suffix Array Results</h2>
+          <ul>
+            Total Time Taken: {{suffixArrayOutput}} milliseconds
+          </ul>
+        </div>
+
+        <div *ngIf="selectedAlgorithm === 'Naive String Matching' && naiveStringMatchingOutput !== undefined">
+          <!-- Display Suffix Tree algorithm results -->
+          <h2>Naive String Matching</h2>
+          <ul>
+            Total Time Taken: {{naiveStringMatchingOutput}} milliseconds
+          </ul>
+        </div>
+
+        <div *ngIf="selectedAlgorithm === 'KMP' && kmpOutput !== undefined">
+          <!-- Display Suffix Tree algorithm results -->
+          <h2>KMP</h2>
+          <ul>
+            Total Time Taken: {{kmpOutput}} milliseconds
+          </ul>
+        </div>
+      
+        <!-- Add sections for other algorithms as needed -->
       </div>
+      
+      <div *ngIf="showCharts">
+        <!-- Add sections for displaying charts here -->
+        <h2>Rabin-Karp Results</h2>
+        <ul>
+          <li *ngFor="let result of rabinKarpOutput">{{ result }}</li>
+        </ul>
+        <h2>Suffix Tree Results</h2>
+        <ul>
+          <li *ngFor="let result of suffixTreeOutput">{{ result }}</li>
+        </ul>
+        <h2>Rabin-Karp Results</h2>
+        <ul>
+          <li *ngFor="let result of suffixArrayOutput">{{ result }}</li>
+        </ul>
+
+        <h2>Naive String Results</h2>
+        <ul>
+          <li *ngFor="let result of naiveStringMatchingOutput">{{ result }}</li>
+        </ul>
+        
+        <h2>KMP Results</h2>
+        <ul>
+          <li *ngFor="let result of kmpOutput">{{ result }}</li>
+        </ul>
+
+
+      </div>
+      
+      
 <!-- Content for Rabin-Karp 
 <div *ngIf="selectedAlgorithm === 'Rabin-Karp'">
   <p>Rabin-Karp Content</p>
