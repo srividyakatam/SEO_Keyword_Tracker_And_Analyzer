@@ -23,6 +23,7 @@ import {MatDialogModule} from "@angular/material/dialog";
 import {NgChartsModule} from "ng2-charts";
 import {DialogContent} from "./dialog-content.component";
 
+
 @NgModule({
   declarations: [
     AppComponent,
