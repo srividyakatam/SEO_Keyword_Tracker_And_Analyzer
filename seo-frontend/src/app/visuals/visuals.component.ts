@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, ViewChild} from '@angular/core';
 import Chart from 'chart.js/auto';
 
 @Component({
@@ -7,26 +7,12 @@ import Chart from 'chart.js/auto';
   styleUrls: ['./visuals.component.css']
 })
 export class VisualsComponent implements AfterViewInit {
+  @Input({required: true}) wordCountData: { word: string, count: number }[] = [];
+  @Input({required: true}) executionTimeData: { algorithm: string, time: number }[] = [];
   @ViewChild('barChartCanvas') private barChartCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('lineChartCanvas') private lineChartCanvas!: ElementRef<HTMLCanvasElement>;
 
   ngAfterViewInit(): void {
-    // Word count data
-    const wordCountData = [
-      { word: 'w1', count: 5 },
-      { word: 'w2', count: 8 },
-      { word: 'w3', count: 3 },
-      // Add more word-count pairs as needed
-    ];
-
-    // Algorithm execution time data
-    const executionTimeData = [
-      { algorithm: 'Rabin-Karp', time: 2.5 },
-      { algorithm: 'KMP', time: 3.2 },
-      { algorithm: 'Naive', time: 4.1 },
-      { algorithm: 'Suffix Tree', time: 2.8 },
-    ];
-
     const barChartCtx = this.barChartCanvas.nativeElement.getContext('2d');
     const lineChartCtx = this.lineChartCanvas.nativeElement.getContext('2d');
 
@@ -35,10 +21,10 @@ export class VisualsComponent implements AfterViewInit {
       new Chart(barChartCtx, {
         type: 'bar',
         data: {
-          labels: wordCountData.map(row => row.word),
+          labels: this.wordCountData.map(row => row.word),
           datasets: [{
             label: 'Word Count',
-            data: wordCountData.map(row => row.count),
+            data: this.wordCountData.map(row => row.count),
             backgroundColor: 'rgba(75, 192, 192, 0.2)',
             borderColor: 'rgba(75, 192, 192, 1)',
             borderWidth: 1
@@ -88,10 +74,10 @@ export class VisualsComponent implements AfterViewInit {
       new Chart(lineChartCtx, {
         type: 'line',
         data: {
-          labels: executionTimeData.map(row => row.algorithm),
+          labels: this.executionTimeData.map(row => row.algorithm),
           datasets: [{
             label: 'Execution Time',
-            data: executionTimeData.map(row => row.time),
+            data: this.executionTimeData.map(row => row.time),
             borderColor: 'rgba(255, 99, 132, 1)',
             borderWidth: 2,
             fill: false

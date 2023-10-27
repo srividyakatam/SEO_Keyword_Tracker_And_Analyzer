@@ -20,8 +20,12 @@
   </div>
 </div>
 <div *ngIf="!loading else spinner">
-  <div class="d-flex p-2">
-    <button (click)="displayContent()" mat-flat-button color="accent">Content</button>
+  <div class="p-2">
+    <h2>Web Page Analysis</h2>
+  </div>
+  <div class="d-flex p-2 gap-2">
+    <button (click)="displayContent()" mat-flat-button color="primary">Content</button>
+<!--    <button (click)="freqTable()" mat-stroked-button color="primary">Frequency Table</button>-->
   </div>
   <div class="d-flex">
     <div class="p-2">
@@ -33,7 +37,7 @@
       </mat-chip-listbox>
     </div>
     <div class="col-6">
-      <h4>Top 20 Keywords</h4>
+      <h4>Top 10 Keywords</h4>
       <canvas
         baseChart
         class="chart"
@@ -55,6 +59,9 @@
                        (clicked)="log('clicked', $event)"
     >
     </angular-tag-cloud>
+  </div>
+  <div class="charts">
+    <app-visuals [wordCountData]="getWordCountData" [executionTimeData]="getExecutionTimeData"></app-visuals>
   </div>
 </div>
 

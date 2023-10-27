@@ -1,15 +1,12 @@
-@import '~bootstrap/dist/css/bootstrap.min.css';
-
 .chart-container {
-    display: flex; /* arranging the charts horizontally */
-    justify-content: space-around; /* Adding space between the charts */
-    margin: 20px; /* Adding the margin for spacing around the container */
-  }
-  
-  /* Style for individual charts */
-  .canvas {
-    width: 400px; /* Set the width of each chart */
-    height: 300px; /* Set the height of each chart */
-    border: 1px solid #ccc; /* Add border for visualization */
-  }
-  
+  display: flex; /* arranging the charts horizontally */
+  justify-content: space-around; /* Adding space between the charts */
+  margin: 20px; /* Adding the margin for spacing around the container */
+}
+
+/* Style for individual charts */
+.canvas {
+  width: 400px; /* Set the width of each chart */
+  height: 300px; /* Set the height of each chart */
+  border: 1px solid #ccc; /* Add border for visualization */
+}

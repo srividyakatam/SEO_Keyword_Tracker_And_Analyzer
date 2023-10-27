@@ -11,6 +11,8 @@ import {ChartConfiguration, ChartData} from 'chart.js';
 import {BaseChartDirective} from 'ng2-charts';
 
 import DataLabelsPlugin from 'chartjs-plugin-datalabels';
+import {TableComponent} from "./table/table.component";
+import {MatTableDataSource} from "@angular/material/table";
 
 @Component({
   selector: 'app-root',
@@ -92,10 +94,34 @@ export class AppComponent {
       }, 1000)
       this.loading = false
     })
+
+    this.formgroup.get('url')?.valueChanges.subscribe(() => {
+      if (this.form('url').includes('https://')) {
+        this.formgroup.get('url')?.setValue(this.form('url').replaceAll('https://', ""))
+      }
+    })
   }
 
   get state() {
     return this.urlData.value
+  }
+
+  get getWordCountData() {
+    return Object.keys(this.urlData.value?.top_keywords || {}).map(key => {
+      return {
+        word: key,
+        count: this.urlData.value?.top_keywords[key] || 0
+      }
+    })
+  }
+
+  get getExecutionTimeData() {
+    return this.urlData.value?.algorithms.map(algo => {
+      return {
+        algorithm: algo.name,
+        time: algo.time
+      }
+    }) || []
   }
 
   log(eventType: string, e?: any) {
@@ -137,6 +163,25 @@ export class AppComponent {
           value: top_keywords[key]
         }
       })
+  }
+
+  freqTable() {
+    let freq = this.iterate(this.state?.top_keywords)
+      .map(row => {
+        return {
+          word: row.key,
+          count: row.value
+        }
+      })
+    this.dialog.open(TableComponent, {
+      data: {
+        columns: [
+          {name: 'Word', value: 'word'},
+          {name: 'Count', value: 'count'}
+        ],
+        dataSource: freq
+      }
+    })
   }
 }
 

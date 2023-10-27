@@ -22,12 +22,17 @@ import {MatChipsModule} from "@angular/material/chips";
 import {MatDialogModule} from "@angular/material/dialog";
 import {NgChartsModule} from "ng2-charts";
 import {DialogContent} from "./dialog-content.component";
+import { TableComponent } from './table/table.component';
+import {MatTableModule} from "@angular/material/table";
+import {MatPaginatorModule} from "@angular/material/paginator";
+import {MatSortModule} from "@angular/material/sort";
 
 @NgModule({
   declarations: [
     AppComponent,
     VisualsComponent,
-    DialogContent
+    DialogContent,
+    TableComponent
   ],
   imports: [
     BrowserModule,
@@ -48,7 +53,10 @@ import {DialogContent} from "./dialog-content.component";
     MatLineModule,
     MatChipsModule,
     MatDialogModule,
-    NgChartsModule
+    NgChartsModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule
   ],
   providers: [],
   bootstrap: [AppComponent]
