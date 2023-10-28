@@ -20,7 +20,7 @@ import {MatTableDataSource} from "@angular/material/table";
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-
+  title: string = 'SEO Keyword Tracker and Analyzer';
   @ViewChild('tagCloudComponent', {static: true}) tagCloudComponent!: TagCloudComponent;
   cloudData: CloudData[] = Array.from({length: 100}, (_, i) => {
     let weight = Math.floor(Math.random() * 10)
