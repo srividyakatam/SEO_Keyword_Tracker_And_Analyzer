@@ -12,7 +12,7 @@ import {BaseChartDirective} from 'ng2-charts';
 
 import DataLabelsPlugin from 'chartjs-plugin-datalabels';
 import {MatTableDataSource} from "@angular/material/table";
-import {TableData} from "./table/table.component";
+import {TableComponent, TableData, TableEvent} from "./table/table.component";
 
 @Component({
   selector: 'app-root',
@@ -59,12 +59,13 @@ export class AppComponent {
     columns: [],
     dataSource: new MatTableDataSource<any>([])
   }
+  @ViewChild('rectable') recTable!: TableComponent
 
   constructor(
     private http: HttpClient,
     private dialog: MatDialog,
   ) {
-    this.urlData.next(response)
+    // this.urlData.next(response)
     // @ts-ignore
     window.home = this;
     this.urlData.subscribe(newRes => {
@@ -103,7 +104,7 @@ export class AppComponent {
 
       this.keywords = {
         columns: [
-          {name: 'Word', value: 'word'},
+          {name: 'Word', value: 'word', tooltip: 'Click to search'},
           {name: 'Count', value: 'count'}
         ],
         dataSource: new MatTableDataSource(this.iterate(this.state?.all_counter)
@@ -130,16 +131,17 @@ export class AppComponent {
         this.state?.recommended_url.map(res => {
           return {
             ...res,
-            exists: "Recommended"
+            exists: "Based on URL"
           }
         }),
         this.state?.recommended_top_keys.map(res => {
           return {
             ...res,
-            exists: "Existed"
+            exists: "Based on Top Keywords"
           }
         })
       ].flat()
+
 
 
       this.recommended = {
@@ -205,6 +207,7 @@ export class AppComponent {
   }
 
   analyseURL() {
+    if(this.formgroup.invalid) return
     console.log(this.formgroup.value)
     this.loading = true
     this.http.post<APIResponse>(ANALYSE_URL, {
@@ -241,5 +244,8 @@ export class AppComponent {
       })
   }
 
+  clickOnTop(event: TableEvent) {
+    this.recTable.search(event.value?.word || '')
+  }
 }
 

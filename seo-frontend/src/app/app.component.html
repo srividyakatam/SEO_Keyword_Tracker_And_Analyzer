@@ -19,56 +19,66 @@
     </div>
   </div>
 </div>
+
 <div class="p-3" *ngIf="!loading else spinner">
-  <div class="p-2">
-    <h2>Web Page Analysis</h2>
-  </div>
-  <div class="d-flex p-2 gap-2">
-    <button (click)="displayContent()" mat-flat-button color="primary">Content</button>
-  </div>
-  <div class="d-flex">
+  <div *ngIf="state">
     <div class="p-2">
-      <h4>Sub Pages</h4>
-      <mat-chip-listbox>
-        <mat-chip (click)="setUrl(subpage)" *ngFor="let subpage of state?.subpages">
-          {{subpage}}
-        </mat-chip>
-      </mat-chip-listbox>
+      <h2>Web Page Analysis</h2>
     </div>
-    <div class="col-6">
-      <h4>Top 10 Keywords</h4>
-      <canvas
-        baseChart
-        class="chart"
-        [data]="barChartData"
-        [options]="barChartOptions"
-        [plugins]="barChartPlugins"
-        [type]="'bar'"
+    <div class="d-flex p-2 gap-2">
+      <button (click)="displayContent()" mat-flat-button color="primary">Content</button>
+    </div>
+    <div class="d-flex">
+      <div class="p-2">
+        <h4>Sub Pages</h4>
+        <mat-chip-listbox>
+          <mat-chip (click)="setUrl(subpage)" *ngFor="let subpage of state?.subpages">
+            {{subpage}}
+          </mat-chip>
+        </mat-chip-listbox>
+      </div>
+      <div class="col-6">
+        <h4>Top 10 Keywords</h4>
+        <canvas
+          baseChart
+          class="chart"
+          [data]="barChartData"
+          [options]="barChartOptions"
+          [plugins]="barChartPlugins"
+          [type]="'bar'"
+        >
+        </canvas>
+      </div>
+    </div>
+    <div class="w-100">
+      <angular-tag-cloud #tagCloudComponent [data]="cloudData" [width]="1"
+                         [height]="1000"
+                         [step]="2"
+                         [overflow]="true"
+                         [zoomOnHover]="{ scale: 1.2,transitionTime: 0.1}"
+                         [class.custom-css]='true'
+                         (clicked)="log('clicked', $event)"
       >
-      </canvas>
+      </angular-tag-cloud>
+    </div>
+    <div class="keywords">
+      <h4>Keywords Frequencies</h4>
+      <app-table [columns]="keywords.columns" [dataSource]="keywords.dataSource"
+                 (rowClick)="clickOnTop($event)"></app-table>
+    </div>
+    <div class="recomended">
+      <h4>Recommended Keywords</h4>
+      <app-table #rectable [columns]="recommended.columns" [dataSource]="recommended.dataSource"></app-table>
+    </div>
+    <div class="charts">
+      <app-visuals [wordCountData]="getWordCountData" [executionTimeData]="getExecutionTimeData"></app-visuals>
     </div>
   </div>
-  <div class="w-100">
-    <angular-tag-cloud #tagCloudComponent [data]="cloudData" [width]="1"
-                       [height]="700"
-                       [step]="2"
-                       [overflow]="true"
-                       [zoomOnHover]="{ scale: 1.2,transitionTime: 0.1}"
-                       [class.custom-css]='true'
-                       (clicked)="log('clicked', $event)"
-    >
-    </angular-tag-cloud>
-  </div>
-  <div class="keywords">
-    <h4>Keywords Frequencies</h4>
-    <app-table [columns]="keywords.columns" [dataSource]="keywords.dataSource"></app-table>
-  </div>
-  <div class="recomended">
-    <h4>Recommended Keywords</h4>
-    <app-table [columns]="recommended.columns" [dataSource]="recommended.dataSource"></app-table>
-  </div>
-  <div class="charts">
-    <app-visuals [wordCountData]="getWordCountData" [executionTimeData]="getExecutionTimeData"></app-visuals>
+  <div *ngIf="!state">
+    <div class="d-flex flex-column justify-content-center align-items-center mt-5">
+      <mat-icon style="width: auto;height: auto;font-size: 6em">query_stats</mat-icon>
+      <h3 class="m-3">Enter a URL to Analyse the Webpage</h3>
+    </div>
   </div>
 </div>
 

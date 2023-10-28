@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
@@ -14,8 +14,12 @@ export class TableComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @Input() columns: Columns[] = [];
+  @Output('rowClick') rowClick = new EventEmitter<TableEvent>();
+
+  input: string = '';
 
   constructor() {
+
   }
 
   get columnValues() {
@@ -39,14 +43,30 @@ export class TableComponent implements AfterViewInit {
       this.dataSource.paginator.firstPage();
     }
   }
+
+  public search(filterValue: string) {
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.input = filterValue
+  }
+
+  emit(element: any) {
+    console.log('emit', element)
+    this.rowClick.emit({type: 'rowClick', value: element});
+  }
 }
 
 export interface Columns {
   name: string;
   value: string;
+  tooltip?: string;
 }
 
 export interface TableData {
   columns: Columns[];
   dataSource: MatTableDataSource<any>;
+}
+
+export interface TableEvent {
+  type: string;
+  value: any;
 }

@@ -2,19 +2,27 @@
   <div class="w-100 d-flex">
     <mat-form-field class="w-100">
       <mat-label>Filter</mat-label>
-      <input matInput (keyup)="applyFilter($event)" placeholder="Word" #input>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Word" [(ngModel)]="input">
     </mat-form-field>
   </div>
   <div class="mat-elevation-z8">
-    <table mat-table [dataSource]="dataSource">
+    <table mat-table matSort [dataSource]="dataSource">
 
       <ng-container [matColumnDef]="col.value" *ngFor="let col of columns">
-        <mat-header-cell *matHeaderCellDef> {{ col.name }} </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element[col.value] }} </mat-cell>
+        <mat-header-cell mat-sort-header *matHeaderCellDef> {{ col.name }} </mat-header-cell>
+        <mat-cell [matTooltip]="element?.tooltip" class="pointer" (click)="emit(element)"
+                  *matCellDef="let element"> {{ element[col.value] }} </mat-cell>
       </ng-container>
 
       <mat-header-row *matHeaderRowDef="columnValues"></mat-header-row>
       <mat-row *matRowDef="let row; columns: columnValues;"></mat-row>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="columns.length">
+          No data matching the filter "{{input}}"
+        </td>
+      </tr>
+
     </table>
 
     <mat-paginator [pageSizeOptions]="[5,10, 25]" aria-label="Select page of users"></mat-paginator>
