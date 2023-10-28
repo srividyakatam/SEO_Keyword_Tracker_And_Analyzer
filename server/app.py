@@ -95,14 +95,14 @@ def analyse():
     filtered_reco = []
     for each in all_counter.most_common(20):
         filtered_reco.extend(
-            list(filter(lambda rec: each[0] in rec['text'] and each[0] != rec['text'], recommended_top_keys))[:10])
+            list(filter(lambda rec: each[0] in rec['text'] and each[0] != rec['text'], recommended_top_keys))[:5])
 
     return jsonify({"text": raw_text,
                     "subpages": list(subpages),
                     "top_keywords": dict(top),
                     "algorithms": algodetails,
                     "recommended_top_keys": filtered_reco,
-                    "recommended_url": recommended_url[:300],
+                    "recommended_url": recommended_url[:100],
                     "all_counter": all_counter
                     })
 
