@@ -1,14 +1,25 @@
 #!/usr/bin/python3
 import sys
+
 from google.ads.googleads.client import GoogleAdsClient
 from google.ads.googleads.errors import GoogleAdsException
 
-client = GoogleAdsClient.load_from_storage('./cred/google-ads.yaml',version="v14")
-customer_id="1667230476"
-location_ids=["1023191"]
-language_id="1000"
+client = GoogleAdsClient.load_from_storage('./cred/google-ads.yaml', version="v14")
+customer_id = "1667230476"
+location_ids = ["1023191"]
+language_id = "1000"
+
+
+def maptoideas(idea):
+    return {
+        "text": idea.text,
+        "avg_monthly_searches": idea.keyword_idea_metrics.avg_monthly_searches,
+        "competition": idea.keyword_idea_metrics.competition.name,
+    }
+
+
 def getKeywordIdeas(
-    keyword_texts, page_url
+        keyword_texts, page_url
 ):
     keyword_plan_idea_service = client.get_service("KeywordPlanIdeaService")
     keyword_competition_level_enum = (
@@ -61,12 +72,7 @@ def getKeywordIdeas(
     keyword_ideas = keyword_plan_idea_service.generate_keyword_ideas(
         request=request
     )
-    def maptoideas(idea):
-        return {
-            "text": idea.text,
-            "avg_monthly_searches": idea.keyword_idea_metrics.avg_monthly_searches,
-            "competition": idea.keyword_idea_metrics.competition.name,
-        }
+
     return list(map(maptoideas, keyword_ideas))
     # [END generate_keyword_ideas]
 
@@ -87,20 +93,22 @@ def map_locations_ids_to_resource_names(client, location_ids):
     return [build_resource_name(location_id) for location_id in location_ids]
 
 
-# if __name__ == "__main__":
-#     try:
-#         getKeywordIdeas(
-#             page_url=page_url,
-#             keyword_texts=None,
-#         )
-#     except GoogleAdsException as ex:
-#         print(
-#             f'Request with ID "{ex.request_id}" failed with status '
-#             f'"{ex.error.code().name}" and includes the following errors:'
-#         )
-#         for error in ex.failure.errors:
-#             print(f'\tError with message "{error.message}".')
-#             if error.location:
-#                 for field_path_element in error.location.field_path_elements:
-#                     print(f"\t\tOn field: {field_path_element.field_name}")
-#         sys.exit(1)
+if __name__ == "__main__":
+    try:
+        data = getKeywordIdeas(
+            page_url=None,
+            keyword_texts=['using', 'data', 'angular']
+        )
+        for d in data:
+            print(d['text'])
+    except GoogleAdsException as ex:
+        print(
+            f'Request with ID "{ex.request_id}" failed with status '
+            f'"{ex.error.code().name}" and includes the following errors:'
+        )
+        for error in ex.failure.errors:
+            print(f'\tError with message "{error.message}".')
+            if error.location:
+                for field_path_element in error.location.field_path_elements:
+                    print(f"\t\tOn field: {field_path_element.field_name}")
+        sys.exit(1)

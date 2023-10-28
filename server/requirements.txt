@@ -7,3 +7,4 @@ nltk
 suffix_trees
 sklearn
 wordcloud
+Gunicorn
