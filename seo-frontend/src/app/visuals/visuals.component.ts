@@ -4,7 +4,7 @@ import Chart from 'chart.js/auto';
 @Component({
   selector: 'app-visuals',
   templateUrl: './visuals.component.html',
-  styleUrls: ['./visuals.component.css']
+  styleUrls: ['./visuals.component.scss']
 })
 export class VisualsComponent implements AfterViewInit {
   @Input({required: true}) wordCountData: { word: string, count: number }[] = [];
