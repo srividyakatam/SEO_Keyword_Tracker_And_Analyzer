@@ -5,6 +5,6 @@ Flask-Cors
 urllib3
 nltk
 suffix_trees
-sklearn
+scikit-learn
 wordcloud
 Gunicorn
