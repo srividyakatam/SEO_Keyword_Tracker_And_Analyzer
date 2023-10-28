@@ -97,6 +97,10 @@ def suffix_tree_search(keyword, text_lines):
     return occurrences
 
 
+def suffix_array_search(keyword, text_lines):
+    return [word for word in text_lines if word]
+
+
 # Each function should have the same signature:
 # - keyword: the keyword to search for
 # - extracted_lines: the list of extracted lines from the text
@@ -104,5 +108,6 @@ algo_funcs = {
     "rabin_karp": rabin_karp_string_search,
     "kmp": kmp_search,
     "naive": naive_string_search,
-    "suffix_tree": suffix_tree_search
+    "suffix_tree": suffix_tree_search,
+    "suffix_array": suffix_array_search
 }
