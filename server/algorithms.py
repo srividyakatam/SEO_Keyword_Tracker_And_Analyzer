@@ -98,7 +98,39 @@ def suffix_tree_search(keyword, text_lines):
 
 
 def suffix_array_search(keyword, text_lines):
-    return [word for word in text_lines if word]
+    # Convert the list of text lines into a single text string
+    text = ' '.join(text_lines)
+    
+    # Convert both the keyword and text to lowercase for case-insensitive search
+    keyword = keyword.lower()
+    text = text.lower()
+    
+    # Build the suffix array
+    suffix_array = build_suffix_array(text)
+    
+    # Search for the keyword in the suffix array
+    occurrences = []
+    keyword_len = len(keyword)
+    for i, suffix in enumerate(suffix_array):
+        if text[suffix:suffix + keyword_len] == keyword:
+            occurrences.append(suffix)
+    
+    return occurrences
+
+def build_suffix_array(text):
+    # Function to build the suffix array of a given text
+    n = len(text)
+    
+    # Create a list of tuples where each tuple contains a suffix and its starting index
+    suffixes = [(text[i:], i) for i in range(n)]
+    
+    # Sort the list of suffixes lexicographically
+    suffixes.sort(key=lambda x: x[0])
+    
+    # Extract the starting indices of the sorted suffixes to form the suffix array
+    suffix_array = [suffix[1] for suffix in suffixes]
+    
+    return suffix_array
 
 
 # Each function should have the same signature:
