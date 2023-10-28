@@ -33,7 +33,7 @@
       </mat-chip-listbox>
     </div>
     <div class="col-6">
-      <h4>Top 20 Keywords</h4>
+      <h4>Top 10 Keywords</h4>
       <canvas
         baseChart
         class="chart"
@@ -159,15 +159,16 @@
     <!-- Line Chart Component with chart data -->
     <mat-tab label="Line Chart">
       <div style="display: block;">
-        <canvas
-        type="line"
-        baseChart
-        class="chart"
-        [options]="lineChartOptions"
-        [legend]="true"
-        [data]="lineChartData"
-
-      ></canvas>
+        <div>
+          <canvas baseChart
+                  [data]="lineChartData"
+                  [labels]="lineChartLabels"
+                  [options]="lineChartOptions"
+                  [legend]="lineChartLegend"
+                  [type]="lineChartType">
+          </canvas>
+        </div>
+          
       </div>  
       
     </mat-tab>
@@ -175,15 +176,22 @@
 
     <mat-tab label="Bar Chart">
 
-      <canvas
-        baseChart
-        class="chart"
-        [data]=""
-        [options]="barChartOptions"
-        [type]='barChartType'
+      <div style="display: block">
+        <canvas baseChart
+                
+                [labels]="barChartLabels"
+                [options]="barChartOption" 
+                [legend]="barChartLegend"
+                [type]="'bar'">
+                
+        </canvas>
+      </div>
+      
 
-      >
-      </canvas>
+
     </mat-tab>
+
+    <canvas #lineChart width="400" height="200"></canvas>
+    <canvas #barChart width="400" height="200"></canvas>
 
 

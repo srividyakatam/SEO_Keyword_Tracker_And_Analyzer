@@ -6,6 +6,7 @@
     "@jayrbolton/suffix-tree": "^0.0.1",
     "body-parser": "^1.20.2",
     "chart.js": "^4.4.0",
-    "ng2-charts": "^5.0.3"
+    "ng2-charts": "^5.0.3",
+    "ngx-chartjs": "^0.0.1"
   }
 }

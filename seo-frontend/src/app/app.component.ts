@@ -1,4 +1,4 @@
-import {Component, ViewChild, OnInit} from '@angular/core';
+import {Component, ViewChild, OnInit, ElementRef, AfterViewInit} from '@angular/core';
 import {CloudData, TagCloudComponent} from "angular-tag-cloud-module";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {HttpClient} from "@angular/common/http";
@@ -11,7 +11,7 @@ import {ChartConfiguration, ChartData, ChartEvent, ChartType, ChartOptions} from
 import {BaseChartDirective} from 'ng2-charts';
 import { MatDialogRef } from '@angular/material/dialog';
 import DataLabelsPlugin from 'chartjs-plugin-datalabels';
-
+import { Chart } from 'chart.js';
 
 @Component({
   selector: 'app-root',
@@ -19,6 +19,7 @@ import DataLabelsPlugin from 'chartjs-plugin-datalabels';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
+
   title: string = 'SEO Keyword Tracker and Analyzer'
   @ViewChild('tagCloudComponent', {static: true}) tagCloudComponent!: TagCloudComponent;
   cloudData: CloudData[] = Array.from({length: 100}, (_, i) => {
@@ -496,9 +497,12 @@ executeAllAlgorithms() {
   // Now the algorithmOutputs array contains the numeric outputs
   console.log('Algorithm Outputs:', algorithmOutputs);
   
-  this.lineChartData.datasets[0].data = algorithmOutputs;
+  //this.lineChartData.datasets[0].data = algorithmOutputs;
+ 
+    // Update the Line Chart data with the algorithm outputs
+    this.lineChartData.datasets[0].data = algorithmOutputs;
+  
 }
-
 
 
 public lineChartOptions: ChartConfiguration['options'] = {
@@ -536,7 +540,7 @@ public lineChartData: ChartConfiguration<'line'>['data'] = {
   labels: this.lineChartLabels,
   datasets: [    
      {
-    data: [],
+    data: [0,0,0,0,0] ,
     label: 'Time taken by each algorithm',
     fill: true,
     tension: 0.5,
@@ -545,50 +549,65 @@ public lineChartData: ChartConfiguration<'line'>['data'] = {
 ],
 }
 
-/*
+public barChartOption: ChartConfiguration['options'] = {
+  responsive: true,
+  scales: {
+    x: {
+      beginAtZero: true,
+      title: {
+        display: true,
+        text: 'Algorithms',
+      },
+    },
+    y: {
+      beginAtZero: true,
+      title: {
+        display: true,
+        text: 'Total Time Taken (ms)',
+      },
+    },
+  },
+};
 
-generateLineGraphForTotalTimeTaken() {
-  // Execute the five methods and measure totalTimeTaken for each
-  this.executeRabinKarpForTop10Keywords();
-  this.executeSuffixTreeSearchTop10Keywords();
-  this.executeSuffixArraySearchTop10Keywords();
-  this.executeNSMSearchTop10Keywords();
-  this.executekmpSearchTop10Keywords();
+public barChartLabels: string[] = [
+  'Rabin Karp',
+  'Suffix Tree',
+  'Suffix Array',
+  'Naive String Match',
+  'Knuth Morris Pratt',
+];
 
-  // Prepare data for the line chart
-  const totalTimeTakenData = [
-    this.totalTimeTaken,
-    this.suffixTreeOutput,
-    this.suffixArrayOutput,
-    this.naiveStringMatchingOutput,
-    this.kmpOutput,
-  ];
-
-  this.lineChartData[0].data = totalTimeTakenData.filter(value => typeof value === 'number');
-}
-*/
 public barChartType: ChartType = 'bar';
 
-// events
-public chartClicked({
-  event,
-  active,
-}: {
-  event: ChartEvent;
-  active: object[];
-}): void {
-  console.log(event, active);
+public barChartLegend = true;
+
+public barChartDatas: ChartData<'bar'> = {
+  labels: this.barChartLabels,
+  datasets: [
+    {
+      data: [], // This will be populated with algorithm outputs
+      label: 'Total Time Taken (ms)',
+      backgroundColor: 'rgba(75, 192, 192, 0.2)',
+      borderColor: 'rgba(75, 192, 192, 1)',
+      borderWidth: 1,
+    },
+  ],
+};
+
+updateBarChartData() {
+  this.executeAllAlgorithms(); // Call the method to get algorithm outputs
+  const algorithmOutputs = [
+    parseFloat(this.rabinKarpOutput || '') || 0,
+    parseFloat(this.suffixTreeOutput || '') || 0,
+    parseFloat(this.suffixArrayOutput || '') || 0,
+    parseFloat(this.naiveStringMatchingOutput || '') || 0,
+    parseFloat(this.kmpOutput || '') || 0,
+  ];
+
+  this.barChartDatas.datasets[0].data = algorithmOutputs;
 }
 
-public chartHovered({
-  event,
-  active,
-}: {
-  event: ChartEvent;
-  active: object[];
-}): void {
-  console.log(event, active);
-}
+
 
 
 
