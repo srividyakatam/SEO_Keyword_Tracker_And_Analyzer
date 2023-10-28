@@ -59,9 +59,9 @@
   </div>
 </div>
 
-<mat-form-field class="mr-10">
+<mat-form-field class="mat-form-field mr-10">
   <mat-label>Type of Algorithm</mat-label>
-  <mat-select [(value)]="selectedAlgorithm" (selectionChange)="onAlgorithmSelected()">
+  <mat-select [(value)]="selectedAlgorithm" (selectionChange)="onAlgorithmSelected()" panelClass="dropdown-below">
     <mat-option value="Rabin-Karp">Rabin-Karp</mat-option>
     <mat-option value="Suffix Tree">Suffix Tree</mat-option>
     <mat-option value="Suffix Array">Suffix Array</mat-option>
@@ -70,52 +70,48 @@
   </mat-select>
 </mat-form-field>
 
-<button class= "button-spacing " (click)="executeAlgorithm()">Execute</button> 
-<!--<button (click)="showCharts()">Charts</button> -->
+<button class="button-spacing mat-primary" (click)="executeAlgorithm()">Execute</button>
 
-
-<div *ngIf="showAlgorithmOutput">
+<div *ngIf="showAlgorithmOutput" class="results-container">
   <div *ngIf="selectedAlgorithm === 'Rabin-Karp' && rabinKarpOutput !== undefined">
     <!-- Display Rabin-Karp algorithm results -->
-    <h2>Rabin-Karp Results</h2>
-    <ul>
-      Total Time Taken: {{rabinKarpOutput}} milliseconds
-      <!--<li *ngFor="let result of rabinKarpOutput">{{ result }}</li>-->
+    <h2 class="results-heading">Rabin-Karp Results</h2>
+    <ul class="results-list">
+      <li class="results-list-item">Total Time Taken: {{rabinKarpOutput}} milliseconds</li>
     </ul>
   </div>
 
   <div *ngIf="selectedAlgorithm === 'Suffix Tree' && suffixTreeOutput !== undefined">
     <!-- Display Suffix Tree algorithm results -->
-    <h2>Suffix Tree Results</h2>
-    <ul>
-      Total Time Taken: {{suffixTreeOutput}} milliseconds
+    <h2 class="results-heading">Suffix Tree Results</h2>
+    <ul class="results-list">
+      <li class="results-list-item">Total Time Taken: {{suffixTreeOutput}} milliseconds</li>
     </ul>
   </div>
 
   <div *ngIf="selectedAlgorithm === 'Suffix Array' && suffixArrayOutput !== undefined">
-    <!-- Display Suffix Tree algorithm results -->
-    <h2>Suffix Array Results</h2>
-    <ul>
-      Total Time Taken: {{suffixArrayOutput}} milliseconds
+    <!-- Display Suffix Array algorithm results -->
+    <h2 class="results-heading">Suffix Array Results</h2>
+    <ul class="results-list">
+      <li class="results-list-item">Total Time Taken: {{suffixArrayOutput}} milliseconds</li>
     </ul>
   </div>
 
   <div *ngIf="selectedAlgorithm === 'Naive String Matching' && naiveStringMatchingOutput !== undefined">
-    <!-- Display Suffix Tree algorithm results -->
-    <h2>Naive String Matching</h2>
-    <ul>
-      Total Time Taken: {{naiveStringMatchingOutput}} milliseconds
+    <!-- Display Naive String Matching algorithm results -->
+    <h2 class="results-heading">Naive String Matching</h2>
+    <ul class="results-list">
+      <li class="results-list-item">Total Time Taken: {{naiveStringMatchingOutput}} milliseconds</li>
     </ul>
   </div>
 
   <div *ngIf="selectedAlgorithm === 'KMP' && kmpOutput !== undefined">
-    <!-- Display Suffix Tree algorithm results -->
-    <h2>KMP</h2>
-    <ul>
-      Total Time Taken: {{kmpOutput}} milliseconds
+    <!-- Display KMP algorithm results -->
+    <h2 class="results-heading">KMP</h2>
+    <ul class="results-list">
+      <li class="results-list-item">Total Time Taken: {{kmpOutput}} milliseconds</li>
     </ul>
   </div>
-
 </div>
 
 <!--<div *ngIf="showCharts">
@@ -155,20 +151,39 @@
   </div>
 </ng-template>
 
+<div class="w-100">
+  <mat-tab-group>
+
+    <!-- Chart Component - Conditional Rendering -->
+
+    <!-- Line Chart Component with chart data -->
+    <mat-tab label="Line Chart">
+      <div style="display: block;">
+        <canvas
+        type="line"
+        baseChart
+        class="chart"
+        [options]="lineChartOptions"
+        [legend]="true"
+        [data]="lineChartData"
+
+      ></canvas>
+      </div>  
+      
+    </mat-tab>
+    
+
+    <mat-tab label="Bar Chart">
+
+      <canvas
+        baseChart
+        class="chart"
+        [data]=""
+        [options]="barChartOptions"
+        [type]='barChartType'
+
+      >
+      </canvas>
+    </mat-tab>
 
 
-<style>
-  .flex-grow-0
-  {
-    padding: 10px;
-  }
-
-  .button-spacing {
-  margin-left: 40px; /* Adjust the value to control the space between the button and the dropdown */
-  }
-
-  .enlarge-button {
-  padding: 25px 60px; /* Adjust the padding values to control the button size */
-  font-size: 18px;    /* Adjust the font size as needed */
-}
-</style>

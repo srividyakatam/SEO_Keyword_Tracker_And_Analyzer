@@ -1,4 +1,4 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, ViewChild, OnInit} from '@angular/core';
 import {CloudData, TagCloudComponent} from "angular-tag-cloud-module";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {HttpClient} from "@angular/common/http";
@@ -7,11 +7,10 @@ import {BehaviorSubject} from "rxjs";
 import {response} from "./test";
 import {MatDialog} from "@angular/material/dialog";
 import {DialogContent} from "./dialog-content.component";
-import {ChartConfiguration, ChartData} from 'chart.js';
+import {ChartConfiguration, ChartData, ChartEvent, ChartType, ChartOptions} from 'chart.js';
 import {BaseChartDirective} from 'ng2-charts';
 import { MatDialogRef } from '@angular/material/dialog';
 import DataLabelsPlugin from 'chartjs-plugin-datalabels';
-
 
 
 @Component({
@@ -107,6 +106,7 @@ export class AppComponent {
   }
 
   analyseURL() {
+    this.executeAllAlgorithms();
     console.log(this.formgroup.value)
     this.loading = true
     this.http.post<APIResponse>(ANALYSE_URL, {
@@ -463,9 +463,133 @@ executeAlgorithm() {
 
 }
 
-showCharts() {
+executeAllAlgorithms() {
+  // Reset the outputs and initialize the array to store the outputs
+  this.rabinKarpOutput = undefined;
+  this.suffixTreeOutput = undefined;
+  this.suffixArrayOutput = undefined;
+  this.naiveStringMatchingOutput = undefined;
+  this.kmpOutput = undefined;
   
+  // Create an array to store the numeric outputs
+  const algorithmOutputs: (number | null)[] = [];
+
+  this.executeRabinKarpForTop10Keywords();
+  algorithmOutputs.push(parseFloat(this.rabinKarpOutput || '') || 0);
+
+  // Perform the Suffix Tree algorithm
+  this.executeSuffixTreeSearchTop10Keywords();
+  algorithmOutputs.push(parseFloat(this.suffixTreeOutput || '') || 0);
+
+  // Perform the Suffix Array algorithm
+  this.executeSuffixArraySearchTop10Keywords();
+  algorithmOutputs.push(parseFloat(this.suffixArrayOutput || '') || 0);
+
+  // Perform the Naive String Matching algorithm
+  this.executeNSMSearchTop10Keywords();
+  algorithmOutputs.push(parseFloat(this.naiveStringMatchingOutput || '') || 0);
+
+  // Perform the KMP algorithm
+  this.executekmpSearchTop10Keywords();
+  algorithmOutputs.push(parseFloat(this.kmpOutput || '') || 0);
+
+  // Now the algorithmOutputs array contains the numeric outputs
+  console.log('Algorithm Outputs:', algorithmOutputs);
+  
+  this.lineChartData.datasets[0].data = algorithmOutputs;
 }
+
+
+
+public lineChartOptions: ChartConfiguration['options'] = {
+  responsive: true,
+ 
+  scales: {
+    x: {
+      type: 'linear',
+      position: 'bottom',
+      title: {
+        display: true,
+        text: 'Name of Algorithm',
+      },
+    },
+    y: {
+      beginAtZero: true,
+      title: {
+        display: true,
+        text: 'Total Time Taken (ms)',
+      },
+    },
+  },
+};
+public lineChartLabels: string[] = [
+  'Rabin Karp',
+  'Suffix Tree',
+  'Suffix Array',
+  'Native String Match',
+  'Knuth Morris Pratt',
+];
+public lineChartType: ChartType = 'line';
+public lineChartLegend = true;
+
+public lineChartData: ChartConfiguration<'line'>['data'] = {
+  labels: this.lineChartLabels,
+  datasets: [    
+     {
+    data: [],
+    label: 'Time taken by each algorithm',
+    fill: true,
+    tension: 0.5,
+    borderColor: 'black',
+  }
+],
+}
+
+/*
+
+generateLineGraphForTotalTimeTaken() {
+  // Execute the five methods and measure totalTimeTaken for each
+  this.executeRabinKarpForTop10Keywords();
+  this.executeSuffixTreeSearchTop10Keywords();
+  this.executeSuffixArraySearchTop10Keywords();
+  this.executeNSMSearchTop10Keywords();
+  this.executekmpSearchTop10Keywords();
+
+  // Prepare data for the line chart
+  const totalTimeTakenData = [
+    this.totalTimeTaken,
+    this.suffixTreeOutput,
+    this.suffixArrayOutput,
+    this.naiveStringMatchingOutput,
+    this.kmpOutput,
+  ];
+
+  this.lineChartData[0].data = totalTimeTakenData.filter(value => typeof value === 'number');
+}
+*/
+public barChartType: ChartType = 'bar';
+
+// events
+public chartClicked({
+  event,
+  active,
+}: {
+  event: ChartEvent;
+  active: object[];
+}): void {
+  console.log(event, active);
+}
+
+public chartHovered({
+  event,
+  active,
+}: {
+  event: ChartEvent;
+  active: object[];
+}): void {
+  console.log(event, active);
+}
+
 
 
 }

@@ -149,3 +149,36 @@
   padding: 10px;
 
 }
+
+.mat-form-field {
+  width: 100%;
+}
+
+.button-spacing {
+  margin-right: 10px;
+}
+
+.results-container {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid hsl(224, 63%, 40%);
+  border-radius: 5px;
+}
+
+.results-heading {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.results-list {
+  list-style: none;
+  padding: 0;
+}
+
+.results-list-item {
+  margin: 5px 0;
+}
+
+.dropdown-below .mat-select-panel {
+  margin-top: 0;
+}

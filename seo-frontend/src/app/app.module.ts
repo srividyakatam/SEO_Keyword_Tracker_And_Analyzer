@@ -22,6 +22,7 @@ import {MatChipsModule} from "@angular/material/chips";
 import {MatDialogModule} from "@angular/material/dialog";
 import {NgChartsModule} from "ng2-charts";
 import {DialogContent} from "./dialog-content.component";
+import {MatTabsModule} from "@angular/material/tabs";
 
 
 @NgModule({
@@ -49,7 +50,9 @@ import {DialogContent} from "./dialog-content.component";
     MatLineModule,
     MatChipsModule,
     MatDialogModule,
-    NgChartsModule
+    NgChartsModule,
+    MatTabsModule,
+  
   ],
   providers: [],
   bootstrap: [AppComponent]
