@@ -11,8 +11,8 @@ import {ChartConfiguration, ChartData} from 'chart.js';
 import {BaseChartDirective} from 'ng2-charts';
 
 import DataLabelsPlugin from 'chartjs-plugin-datalabels';
-import {TableComponent} from "./table/table.component";
 import {MatTableDataSource} from "@angular/material/table";
+import {TableData} from "./table/table.component";
 
 @Component({
   selector: 'app-root',
@@ -50,6 +50,15 @@ export class AppComponent {
   };
   public barChartPlugins = [DataLabelsPlugin];
   public barChartData!: ChartData<'bar'>
+
+  recommended: TableData = {
+    columns: [],
+    dataSource: new MatTableDataSource<any>([])
+  }
+  keywords: TableData = {
+    columns: [],
+    dataSource: new MatTableDataSource<any>([])
+  }
 
   constructor(
     private http: HttpClient,
@@ -89,6 +98,73 @@ export class AppComponent {
           tooltip: `${newRes.all_counter[key]} occurrences`,
         }
       })
+
+      // Recommended table
+
+      this.keywords = {
+        columns: [
+          {name: 'Word', value: 'word'},
+          {name: 'Count', value: 'count'}
+        ],
+        dataSource: new MatTableDataSource(this.iterate(this.state?.all_counter)
+          .map(row => {
+            return {
+              word: row.key,
+              count: row.value
+            }
+          }))
+      }
+
+
+      // avg_monthly_searches
+      //   :
+      //   1000
+      // competition
+      //   :
+      //   "LOW"
+      // text
+      //   :
+      //   "software development"
+
+      let recData = [
+        this.state?.recommended_url.map(res => {
+          return {
+            ...res,
+            exists: "Recommended"
+          }
+        }),
+        this.state?.recommended_top_keys.map(res => {
+          return {
+            ...res,
+            exists: "Existed"
+          }
+        })
+      ].flat()
+
+
+      this.recommended = {
+        columns: [
+          {
+            name: 'Text',
+            value: 'text'
+          },
+          {
+            name: 'Average Monthly Searches',
+            value: 'avg_monthly_searches'
+          },
+          {
+            name: 'Competition',
+            value: 'competition'
+          },
+          {
+            name: 'Existence',
+            value: 'exists'
+          }
+        ],
+        dataSource: new MatTableDataSource(recData)
+      }
+
+
       setTimeout(() => {
         this.tagCloudComponent && this.tagCloudComponent.reDraw()
       }, 1000)
@@ -165,23 +241,5 @@ export class AppComponent {
       })
   }
 
-  freqTable() {
-    let freq = this.iterate(this.state?.top_keywords)
-      .map(row => {
-        return {
-          word: row.key,
-          count: row.value
-        }
-      })
-    this.dialog.open(TableComponent, {
-      data: {
-        columns: [
-          {name: 'Word', value: 'word'},
-          {name: 'Count', value: 'count'}
-        ],
-        dataSource: freq
-      }
-    })
-  }
 }
 

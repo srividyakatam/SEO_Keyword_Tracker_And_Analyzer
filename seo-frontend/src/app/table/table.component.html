@@ -1,18 +1,24 @@
-<mat-form-field>
-  <mat-label>Filter</mat-label>
-  <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
-</mat-form-field>
+<div class="p-4 overflow-auto">
+  <div class="w-100 d-flex">
+    <mat-form-field class="w-100">
+      <mat-label>Filter</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Word" #input>
+    </mat-form-field>
+  </div>
+  <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource">
 
-<div class="mat-elevation-z8">
-  <mat-table #table [dataSource]="dataSource">
-    <ng-container [matColumnDef]="col.value" *ngFor="let col of columns">
-      <mat-header-cell *matHeaderCellDef> {{ col.name }} </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element[col.value] }} </mat-cell>
-    </ng-container>
-    <mat-header-row *matHeaderRowDef="columnNames"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: columnNames;"></mat-row>
-  </mat-table>
+      <ng-container [matColumnDef]="col.value" *ngFor="let col of columns">
+        <mat-header-cell *matHeaderCellDef> {{ col.name }} </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element[col.value] }} </mat-cell>
+      </ng-container>
 
-  <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
+      <mat-header-row *matHeaderRowDef="columnValues"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: columnValues;"></mat-row>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5,10, 25]" aria-label="Select page of users"></mat-paginator>
+  </div>
+
+
 </div>
-

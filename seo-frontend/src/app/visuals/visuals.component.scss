@@ -1,12 +1,10 @@
 .chart-container {
   display: flex; /* arranging the charts horizontally */
-  justify-content: space-around; /* Adding space between the charts */
-  margin: 20px; /* Adding the margin for spacing around the container */
+  justify-content: space-around;
 }
 
-/* Style for individual charts */
-.canvas {
-  width: 400px; /* Set the width of each chart */
-  height: 300px; /* Set the height of each chart */
-  border: 1px solid #ccc; /* Add border for visualization */
-}
+//.canvas {
+//  width: 400px; /* Set the width of each chart */
+//  height: 300px; /* Set the height of each chart */
+//  border: 1px solid #ccc; /* Add border for visualization */
+//}

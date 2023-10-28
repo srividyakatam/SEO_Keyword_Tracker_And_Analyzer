@@ -1,5 +1,8 @@
-<div class="chart-container">
-  <canvas #barChartCanvas class="canvas"></canvas>
-  <canvas #lineChartCanvas class="canvas"></canvas>
-</div>
-
+<mat-tab-group>
+  <mat-tab label="Word Count">
+    <canvas #barChartCanvas class="canvas"></canvas>
+  </mat-tab>
+  <mat-tab label="Execution Times">
+    <canvas #lineChartCanvas class="canvas"></canvas>
+  </mat-tab>
+</mat-tab-group>

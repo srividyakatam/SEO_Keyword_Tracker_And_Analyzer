@@ -1,8 +1,7 @@
-import {AfterViewInit, Component, Inject, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, Input, ViewChild} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
-import {MAT_DIALOG_DATA} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-table',
@@ -10,25 +9,17 @@ import {MAT_DIALOG_DATA} from "@angular/material/dialog";
   templateUrl: 'table.component.html',
 })
 export class TableComponent implements AfterViewInit {
-  dataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]);
+  @Input() dataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  columns: { name: string, value: string }[] = [];
+  @Input() columns: Columns[] = [];
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: {
-      columns: { name: string, value: string }[],
-      dataSource: any
-    }
-  ) {
-    console.log({data})
-    try{
-      this.columns = data.columns;
-      this.dataSource = new MatTableDataSource<any>(data.dataSource);
-    }catch(e){
-      debugger;
-    }
+  constructor() {
+  }
+
+  get columnValues() {
+    return this.columns.map(c => c.value);
   }
 
   get columnNames() {
@@ -48,4 +39,14 @@ export class TableComponent implements AfterViewInit {
       this.dataSource.paginator.firstPage();
     }
   }
+}
+
+export interface Columns {
+  name: string;
+  value: string;
+}
+
+export interface TableData {
+  columns: Columns[];
+  dataSource: MatTableDataSource<any>;
 }
