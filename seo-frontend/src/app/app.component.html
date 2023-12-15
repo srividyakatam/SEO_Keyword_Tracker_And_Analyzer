@@ -32,7 +32,7 @@
       <div class="p-2">
         <h4>Sub Pages</h4>
         <mat-chip-listbox>
-          <mat-chip (click)="setUrl(subpage)" *ngFor="let subpage of state?.subpages">
+          <mat-chip (click)="setUrl(subpage)" *ngFor="let subpage of state?.subpages?.slice(0,10)">
             {{subpage}}
           </mat-chip>
         </mat-chip-listbox>

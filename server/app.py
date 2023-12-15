@@ -53,7 +53,6 @@ def extract_keywords_and_text_lines(soupp, num_keywords):
     raw_text = ""
     for tag in soupp.find("body").find_all(string=True, recursive=True):
         raw_text += "{} ".format(tag.text)
-    print("text", raw_text)
     alldata = split_text_into_words(raw_text)
     word_counts = Counter(alldata)
     return word_counts.most_common(num_keywords), alldata, raw_text, word_counts
@@ -95,14 +94,14 @@ def analyse():
     filtered_reco = []
     for each in all_counter.most_common(20):
         filtered_reco.extend(
-            list(filter(lambda rec: each[0] in rec['text'] and each[0] != rec['text'], recommended_top_keys))[:5])
+            list(filter(lambda rec: each[0] in rec['text'] and each[0] != rec['text'], recommended_top_keys))[:10])
 
     return jsonify({"text": raw_text,
                     "subpages": list(subpages),
                     "top_keywords": dict(top),
                     "algorithms": algodetails,
                     "recommended_top_keys": filtered_reco,
-                    "recommended_url": recommended_url[:100],
+                    "recommended_url": recommended_url[:300],
                     "all_counter": all_counter
                     })
 
